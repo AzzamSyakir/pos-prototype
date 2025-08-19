@@ -1,0 +1,33 @@
+services:
+    app-db:
+        image: postgres:13.22
+        container_name: app-db
+        restart: always
+        tty: true
+        environment:
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_DATABASE}
+        ports:
+            - ${DB_PORT}:5432
+        volumes:
+            - app-db:/var/lib/postgresql
+
+    # app:
+    #     image: bukanasa/kitabantu-backend:app
+    #     container_name: app
+    #     restart: always
+    #     tty: true
+    #     depends_on:
+    #         - app-db
+    #         - rabbitmq
+    #     environment:
+    #         RABBITMQ_HOST: rabbitmq
+    #         DB_HOST: app-db
+    #         REDIS_HOST: redis
+    #     volumes:
+    #         - ../.:/var/www/
+    #     command: /bin/sh -c "sleep 5 && php artisan config:cache && php artisan migrate --force && php-fpm"
+
+volumes:
+    app-db:
