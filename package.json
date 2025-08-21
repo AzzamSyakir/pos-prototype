@@ -15,7 +15,9 @@
   "type": "module",
   "imports": {
     "#utils/*": "./pkg/utils/*.js",
-    "#routes/*": "./src/server/http/routes/*.js"
+    "#httpServer": "./src/server/http/server.js",
+    "#httpServer/routes/*": "./src/server/http/routes/*.js",
+    "#httpServer/middleware/*": "./src/server/http/middleware/*.js"
   },
   "main": "cmd/index.js",
   "directories": {
