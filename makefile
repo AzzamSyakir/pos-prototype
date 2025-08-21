@@ -1,6 +1,9 @@
 ENV_FILE := .env
 COMPOSE_PATH := ./docker
-
+ENTRYPOINT_PATH=src/cmd/index.js
+start-node:
+	@clear
+	node ${ENTRYPOINT_PATH}
 up-dev:
 	@clear
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_PATH)/docker-compose.dev.yml up -d

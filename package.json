@@ -12,12 +12,23 @@
   },
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
-  "main": "index.js",
+  "type": "module",
+  "imports": {
+    "#utils/*": "./pkg/utils/*.js",
+    "#httpServer": "./src/server/http/server.js",
+    "#httpServer/routes/*": "./src/server/http/routes/*.js",
+    "#httpServer/middleware/*": "./src/server/http/middleware/*.js"
+  },
+  "main": "cmd/index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "dotenv": "^17.2.1",
     "express": "^5.1.0"
   }
 }
