@@ -1,5 +1,5 @@
 import env from "#utils/env";
-import { NewRoutes } from "#routes/routes";
+import { NewRoutes } from "#httpServer/routes/routes";
 import express from "express"
 // import { NewMiddliware } from "./middlewares/middleware.js";
 
@@ -14,7 +14,6 @@ export function newServer() {
   NewRoutes(app);
 
   app.listen(port, () => {
-    console.log(`running at ${host}:${port}`);
+    console.log(`App Running at ${host}:${port}`);
   });
 }
-newServer()
