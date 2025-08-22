@@ -8,5 +8,5 @@ function CreateNewStripeObject() {
 }
 
 
-const stripe = CreateNewStripeObject();
-export default stripe;
+const stripeObject = CreateNewStripeObject();
+export default stripeObject;
