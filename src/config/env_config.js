@@ -11,6 +11,12 @@ class AppEnv {
     this.APP_PORT = appPort;
   }
 }
+class PaymentGatewayEnv {
+  constructor(secretKey, publishableKey) {
+    this.secretKey = secretKey;
+    this.publishableKey = publishableKey;
+  }
+}
 
 class DbEnv {
   constructor(dbUsername, dbPassword, dbHost, dbPort, dbDatabase) {
@@ -23,9 +29,10 @@ class DbEnv {
 }
 
 class EnvModule {
-  constructor(appEnv, dbEnv) {
+  constructor(appEnv, dbEnv, PaymentGatewayEnv) {
     this.app = appEnv;
     this.db = dbEnv;
+    this.PaymentGateway = PaymentGatewayEnv
   }
 }
 
@@ -42,8 +49,12 @@ function NewEnv() {
     process.env.DB_PORT,
     process.env.DB_DATABASE,
   );
+  const paymentGatewayEnv = new PaymentGatewayEnv(
+    process.env.STRIPE_SECRET_KEY,
+    process.env.STRIPE_PUBLISHABLE_KEY
+  )
 
-  return new EnvModule(appEnv, dbEnv);
+  return new EnvModule(appEnv, dbEnv, paymentGatewayEnv);
 }
 
 const env = NewEnv();
