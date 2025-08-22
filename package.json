@@ -15,6 +15,7 @@
   "type": "module",
   "imports": {
     "#utils/*": "./pkg/utils/*.js",
+    "#config/*": "./src/config/*.js",
     "#httpServer": "./src/server/http/server.js",
     "#httpServer/routes/*": "./src/server/http/routes/*.js",
     "#httpServer/middleware/*": "./src/server/http/middleware/*.js"
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
   }
 }
