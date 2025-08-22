@@ -12,7 +12,7 @@ services:
             - ${DB_PORT}:5432
         volumes:
             - app-db:/var/lib/postgresql
-
+            - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
     # app:
     #     image: bukanasa/kitabantu-backend:app
     #     container_name: app

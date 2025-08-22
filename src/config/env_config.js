@@ -13,11 +13,12 @@ class AppEnv {
 }
 
 class DbEnv {
-  constructor(dbUsername, dbPassword, dbPort, dbDatabase) {
-    this.DB_USERNAME = dbUsername;
-    this.DB_PASSWORD = dbPassword;
-    this.DB_PORT = dbPort;
-    this.DB_DATABASE = dbDatabase;
+  constructor(dbUsername, dbPassword, dbHost, dbPort, dbDatabase) {
+    this.user = dbUsername;
+    this.password = dbPassword;
+    this.host = dbHost;
+    this.port = dbPort;
+    this.database = dbDatabase;
   }
 }
 
@@ -37,6 +38,7 @@ function NewEnv() {
   const dbEnv = new DbEnv(
     process.env.DB_USERNAME,
     process.env.DB_PASSWORD,
+    process.env.DB_HOST,
     process.env.DB_PORT,
     process.env.DB_DATABASE,
   );
