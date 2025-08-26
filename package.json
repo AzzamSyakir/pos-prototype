@@ -15,10 +15,14 @@
   "type": "module",
   "imports": {
     "#utils/*": "./pkg/utils/*.js",
+    "#entity/*": "./pkg/entity/*.js",
     "#config/*": "./src/config/*.js",
     "#httpServer": "./src/server/http/server.js",
     "#httpServer/routes/*": "./src/server/http/routes/*.js",
-    "#httpServer/middleware/*": "./src/server/http/middleware/*.js"
+    "#httpServer/middleware/*": "./src/server/http/middleware/*.js",
+    "#controller/http/*": "./src/controller/http/*.js",
+    "#services*": "./src/services/*.js",
+    "#services/*": "./src/services/*.js"
   },
   "main": "cmd/index.js",
   "directories": {
