@@ -1,11 +1,15 @@
 import stripe from "#config/payment_gateway_config";
 async function CreatePaymentIntent(stripe) {
+  const customer = await stripe.customers.create({
+    name: 'wowo',
+  });
   const paymentIntent = await stripe.paymentIntents.create({
     amount: 100000,
     currency: 'usd',
     payment_method: 'pm_card_visa',
     payment_method_types: ['card'],
     confirm: true,
+    customer: customer.id
   });
   return paymentIntent;
 }
