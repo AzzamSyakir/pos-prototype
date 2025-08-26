@@ -1,5 +1,4 @@
-import { TransactionRoutes } from "./transaction.js";
-
+import { TransactionRoutes } from './transaction.js';
 /**
  * @param {object} deps
  * @param {import('express').Express} deps.app
