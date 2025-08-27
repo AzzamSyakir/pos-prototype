@@ -1,7 +1,8 @@
 export class TransactionEntity {
-  constructor(amount) {
+  constructor(amount, paymentMethod) {
     this.amount = amount;
     this.status = "pending";
+    this.paymentMethod = paymentMethod;
   }
 
   cancel() {
