@@ -22,7 +22,7 @@ export async function CreateTransaction(req, res) {
 
     return res
       .status(200)
-      .json(response.successResponse(200, "Transaction created successfully", result));
+      .json(response.SuccessResponse(200, "Transaction created successfully", result));
   } catch (err) {
     return res
       .status(500)
