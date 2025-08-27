@@ -21,8 +21,8 @@
     "#httpServer/routes/*": "./src/server/http/routes/*.js",
     "#httpServer/middleware/*": "./src/server/http/middleware/*.js",
     "#controller/http/*": "./src/controller/http/*.js",
-    "#services*": "./src/services/*.js",
-    "#services/*": "./src/services/*.js"
+    "#services/*": "./src/services/*.js",
+    "#dto/*": "./src/dto/*.js"
   },
   "main": "cmd/index.js",
   "directories": {
