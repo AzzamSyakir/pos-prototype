@@ -1,10 +1,31 @@
 import * as transactionServices from "#services/transaction";
-
+import { TransactionDto } from '#dto/transaction';
+import * as response from '#utils/response_utils'
 /**
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
-export function CreateTransaction(req, res) {
-  transactionServices.CreateTransaction(req.body.amount)
-  return res.json({ message: "Transaction created" });
+
+
+export async function CreateTransaction(req, res) {
+  try {
+    const dto = TransactionDto.fromRequest(req.body);
+
+    const { valid, message } = dto.validate();
+    if (!valid) {
+      return res
+        .status(400)
+        .json(response.errorResponse(400, `Validation failed: ${message}`));
+    }
+
+    const result = await transactionServices.CreateTransaction(dto);
+
+    return res
+      .status(200)
+      .json(response.successResponse(200, "Transaction created successfully", result));
+  } catch (err) {
+    return res
+      .status(500)
+      .json(response.errorResponse(500, err.message || "Internal server error"));
+  }
 }
