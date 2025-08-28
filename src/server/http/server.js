@@ -1,10 +1,15 @@
+<<<<<<< Updated upstream
 import env from "#config/env_config";
 import { RegisterRoutes } from "#httpServer/routes/routes";
 import express from "express"
+=======
+import { NewRoutes } from "./routes/routes.js";
+>>>>>>> Stashed changes
 // import { NewMiddliware } from "./middlewares/middleware.js";
 
 
 export function newServer() {
+<<<<<<< Updated upstream
   const app = express();
   const host = env.app.APP_HOST || "localhost";
   const port = env.app.APP_PORT || 3000;
@@ -24,4 +29,17 @@ export function newServer() {
     process.exit(1);
   });
   return app;
+=======
+
+  const app = express();
+  const host = 'localhost'; // change to get from env
+  const port = 8080; // change to get from env
+
+  // NewMiddliware();
+  NewRoutes(app);
+
+  app.listen(port, () => {
+    console.log(`running at ${host}:${port}`);
+  });
+>>>>>>> Stashed changes
 }
