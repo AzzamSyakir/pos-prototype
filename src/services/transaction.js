@@ -8,6 +8,6 @@ export async function CreateTransaction(dto) {
     dto.amount,
     dto.paymentMethod
   );
-  const paymentIntent = await paymentGatewayUtils.CreatePaymentIntent(trx)
+  const paymentIntent = await paymentGatewayUtils.CreatePayment(trx)
   return paymentIntent
 }
