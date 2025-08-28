@@ -28,6 +28,11 @@ services:
     #     volumes:
     #         - ../.:/var/www/
     #     command: /bin/sh -c "sleep 5 && php artisan config:cache && php artisan migrate --force && php-fpm"
-
+    swagger-ui:
+        image: swaggerapi/swagger-ui:latest
+        container_name: swagger-ui
+        restart: unless-stopped
+        ports:
+            - ${SWAGGER_PORT}:8080
 volumes:
     app-db:
