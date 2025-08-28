@@ -9,8 +9,12 @@ import * as response from '#utils/response_utils'
 
 export async function CreateTransaction(req, res) {
   try {
+    const validation = TransactionDto.validateFormRequest(req.body);
+    if (!validation.valid) {
+      return res.status(400)
+        .json(response.errorResponse(400, validation.message || "request validation failed"));
+    }
     const dto = TransactionDto.fromRequest(req.body);
-
     const { valid, message } = dto.validate();
     if (!valid) {
       return res
