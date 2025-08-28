@@ -22,7 +22,9 @@
     "#httpServer/middleware/*": "./src/server/http/middleware/*.js",
     "#controller/http/*": "./src/controller/http/*.js",
     "#services/*": "./src/services/*.js",
-    "#dto/*": "./src/dto/*.js"
+    "#repository/*": "./src/repository/*.js",
+    "#dto/*": "./src/dto/*.js",
+    "#models/*": "./src/models/*.js"
   },
   "main": "cmd/index.js",
   "directories": {
