@@ -15,13 +15,6 @@ export async function CreateTransaction(req, res) {
         .json(response.errorResponse(400, validation.message || "request validation failed"));
     }
     const dto = TransactionDto.fromRequest(req.body);
-    const { valid, message } = dto.validate();
-    if (!valid) {
-      return res
-        .status(400)
-        .json(response.errorResponse(400, `Validation failed: ${message}`));
-    }
-
     const result = await transactionServices.CreateTransaction(dto);
 
     return res
