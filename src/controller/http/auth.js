@@ -25,3 +25,21 @@ export async function Register(req, res) {
       .json(response.errorResponse(500, err.message || "Internal server error"));
   }
 }
+export async function Login(req, res) {
+  try {
+    const validation = authDto.AuthLoginDto.validateFormRequest(req.body);
+    if (!validation.valid) {
+      return res.status(400)
+        .json(response.errorResponse(400, validation.message || "request validation failed"));
+    }
+    const dto = authDto.AuthLoginDto.fromRequest(req.body);
+    const result = await authServices.Login(dto);
+    return res
+      .status(200)
+      .json(response.SuccessResponse(200, "Login success", result));
+  } catch (err) {
+    return res
+      .status(500)
+      .json(response.errorResponse(500, err.message || "Internal server error"));
+  }
+}

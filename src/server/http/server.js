@@ -6,8 +6,8 @@ import express from "express"
 
 export function newServer() {
   const app = express();
-  const host = env.app.APP_HOST || "localhost";
-  const port = env.app.APP_PORT || 3000;
+  const host = env.app.appHost || "localhost";
+  const port = env.app.appPort || 3000;
   app.use(express.json());
   RegisterRoutes(app);
   app.set("port", port);
