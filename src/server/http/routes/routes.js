@@ -1,9 +1,10 @@
 import { TransactionRoutes } from './transaction.js';
+import { AuthRoutes } from './auth.js';
 /**
  * @param {object} deps
  * @param {import('express').Express} deps.app
- * @param {import('express').Router} deps.router
  */
-export function RegisterRoutes(app, router) {
-  TransactionRoutes(app, router);
+export function RegisterRoutes(app) {
+  TransactionRoutes(app);
+  AuthRoutes(app);
 }
