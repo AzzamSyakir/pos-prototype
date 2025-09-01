@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import * as authRepo from '#repository/auth'
 import jwt from 'jsonwebtoken'
 import env from "#config/env_config";
+import redis from "#config/redis_config";
 import * as authDto from '#dto/auth';
 
 /**
@@ -61,6 +62,15 @@ export async function Login(dto) {
 
   var accessToken = jwt.sign(payload, env.app.jwtSecret, { expiresIn: accessExpiry });
   var refreshToken = jwt.sign(payload, env.app.jwtSecret, { expiresIn: refreshExpiry });
+
+  const redisKeyRefreshToken = `refresh_token:${user.id}`;
+
+  const redisPayloadRefreshToken = {
+    token: refreshToken,
+    expiry: refreshExpiry,
+  };
+
+  await redis.set(redisKeyRefreshToken, JSON.stringify(redisPayloadRefreshToken));
 
   return {
     access_token: {
