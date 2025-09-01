@@ -62,5 +62,14 @@ export async function CreatePayment(trx) {
 
   return paymentIntent;
 }
-
+/**
+ * @param { import('#entity/auth').UserEntity } auth
+  */
+export async function CreateCustomer(auth) {
+  const customer = await stripe.customers.create({
+    name: auth.name,
+    email: auth.email,
+  });
+  return customer
+}
 

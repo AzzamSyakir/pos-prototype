@@ -1,10 +1,11 @@
 import * as transactionController from "#controller/http/transaction";
+import express from "express";
 
 /**
  * @param {import('express').Express} app
- * @param {import('express').Router} router
  */
-export function TransactionRoutes(app, router) {
+export function TransactionRoutes(app) {
+  const router = express.Router();
   router.get("/", (req, res) => {
     res.send("GET all transactions");
   });

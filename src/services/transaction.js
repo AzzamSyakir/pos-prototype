@@ -1,5 +1,5 @@
 import { TransactionEntity } from '#entity/transaction'
-import * as paymentGatewayUtils from '#utils/payment_gateway_utils'
+import * as stripeUtils from '#utils/stripe_utils'
 import * as transactionRepo from '#repository/transaction'
 /**
  * @param {import('#dto/transaction').TransactionDto} dto
@@ -16,6 +16,6 @@ export async function CreateTransaction(dto) {
   );
   const currentTime = new Date();
   const result = transactionRepo.CreateTransaction(trx, currentTime);
-  paymentGatewayUtils.CreatePayment(trx)
+  stripeUtils.CreatePayment(trx)
   return result
 }

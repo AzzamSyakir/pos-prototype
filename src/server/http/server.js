@@ -8,9 +8,8 @@ export function newServer() {
   const app = express();
   const host = env.app.APP_HOST || "localhost";
   const port = env.app.APP_PORT || 3000;
-  const router = express.Router();
   app.use(express.json());
-  RegisterRoutes(app, router);
+  RegisterRoutes(app);
   app.set("port", port);
   const server = app.listen(app.get("port"), host, () => {
     console.log(`Server started on http://${host}:${app.get("port")}`);
