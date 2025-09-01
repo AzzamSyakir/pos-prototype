@@ -18,6 +18,7 @@ CREATE TABLE
     name VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
     password VARCHAR NOT NULL,
+    phone_number VARCHAR NOT NULL,
     stripe_customer_id VARCHAR,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
