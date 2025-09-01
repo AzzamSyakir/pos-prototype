@@ -1,4 +1,4 @@
-import * as transactionController from "#controller/http/transaction";
+import * as authController from "#controller/http/auth";
 import express from "express";
 /**
  * @param {import('express').Express} app
@@ -13,7 +13,7 @@ export function AuthRoutes(app) {
     res.send("cihuy");
   });
   router.post("/register", (req, res) => {
-    res.send("register bos");
+    authController.Register(req, res)
   });
 
   app.use("/api/auths", router);
