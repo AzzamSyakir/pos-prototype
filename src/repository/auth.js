@@ -39,7 +39,7 @@ export async function CreateUser(userEntity, currentTime) {
 
 export async function GetUserCredentialsByEmail(email) {
   const query = `
-    SELECT stripe_customer_id ,password
+    SELECT id ,password, stripe_customer_id
     FROM users
     WHERE email = $1
     LIMIT 1
@@ -53,7 +53,7 @@ export async function GetUserCredentialsByEmail(email) {
 
 export async function GetUserCredentialsByName(name) {
   const query = `
-    SELECT stripe_customer_id, password
+    SELECT id, password, stripe_customer_id
     FROM users
     WHERE name = $1
     LIMIT 1
