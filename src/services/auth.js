@@ -52,7 +52,8 @@ export async function Login(dto) {
     throw new Error("Invalid credentials");
   }
 
-  var payload = {
+  var jwtPayload = {
+    userId: user.id,
     stripe_cus_id: user.stripe_customer_id,
     [foundField]: user[foundField]
   };
@@ -60,8 +61,8 @@ export async function Login(dto) {
   var accessExpiry = env.app.accessTokenExpiry || "5m";
   var refreshExpiry = env.app.accesrefreshTokenExpiry || "1d";
 
-  var accessToken = jwt.sign(payload, env.app.jwtSecret, { expiresIn: accessExpiry });
-  var refreshToken = jwt.sign(payload, env.app.jwtSecret, { expiresIn: refreshExpiry });
+  var accessToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: accessExpiry });
+  var refreshToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: refreshExpiry });
 
   const redisKeyRefreshToken = `refresh_token:${user.id}`;
 
