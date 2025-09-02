@@ -84,3 +84,19 @@ export async function Login(dto) {
     },
   };
 }
+export async function GenerateAccessToken(decodedData) {
+
+  var jwtPayload = {
+    userId: decodedData.userId,
+    stripe_cus_id: decodedData.stripe_cus_id,
+  };
+  var accessExpiry = env.app.accessTokenExpiry || "5m";
+  var accessToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: accessExpiry });
+
+  return {
+    access_token: {
+      token: accessToken,
+      expiry: accessExpiry,
+    },
+  }
+}
