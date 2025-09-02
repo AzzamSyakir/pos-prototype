@@ -43,7 +43,6 @@ export async function CheckRefreshToken(req, res, next) {
     try {
       parsed = JSON.parse(storedData);
     } catch (err) {
-      console.error("Redis value parse error:", err.message);
       return res
         .status(500)
         .json(response.errorResponse(500, "Invalid refresh token format in store"));
@@ -65,11 +64,9 @@ export async function CheckRefreshToken(req, res, next) {
       }
     }
 
-    req.user = decoded;
-    console.log("✅ Refresh token valid");
+    req.decoded = decoded;
     return next();
   } catch (err) {
-    console.error("CheckRefreshToken Error:", err.message);
     return res
       .status(401)
       .json(response.errorResponse(401, "Invalid or expired token"));
