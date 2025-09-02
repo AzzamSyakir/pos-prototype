@@ -9,14 +9,15 @@ export async function CreateTransaction(trx, currentTime) {
     trx.amount,
     trx.status,
     trx.paymentMethod,
+    trx.userId,
     currentTime,
     currentTime
   );
 
   const query = `
     INSERT INTO transactions
-      (id, amount, status, payment_method, created_at, updated_at)
-    VALUES ($1, $2, $3, $4, $5, $6)
+      (id, amount, status, payment_method, user_id, created_at, updated_at)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *;
   `;
 
@@ -25,6 +26,7 @@ export async function CreateTransaction(trx, currentTime) {
     model.amount,
     model.status,
     model.paymentMethod,
+    model.userId,
     model.created_at,
     model.updated_at
   ];

@@ -12,10 +12,25 @@ export async function CreateTransaction(dto) {
     dto.accountholderName,
     dto.email,
     dto.accountNumber,
-    dto.routingNumber
+    dto.routingNumber,
+    dto.userId,
+    dto.stripeCustomerId,
   );
+
   const currentTime = new Date();
-  const result = transactionRepo.CreateTransaction(trx, currentTime);
-  stripeUtils.CreatePayment(trx)
-  return result
+
+  const result = await transactionRepo.CreateTransaction(trx, currentTime);
+
+  const payment = await stripeUtils.CreatePayment(trx);
+
+  const response = {
+    status: 'success',
+    transaction: result,
+    payment: payment.payment ?? payment,
+  };
+
+  if (payment.verify_with_microdeposits) {
+    response.verify_with_microdeposits = payment.verify_with_microdeposits;
+  }
+  return response;
 }

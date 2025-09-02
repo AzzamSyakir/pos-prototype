@@ -1,5 +1,5 @@
 export class TransactionDto {
-  constructor({ amount, paymentMethod, accountholderName, accountNumber, routingNumber, iban, email }) {
+  constructor({ amount, paymentMethod, accountholderName, accountNumber, routingNumber, iban, email, stripeCustomerId, userId }) {
     this.amount = amount;
     this.paymentMethod = paymentMethod;
     this.accountholderName = accountholderName;
@@ -7,6 +7,8 @@ export class TransactionDto {
     this.routingNumber = routingNumber;
     this.iban = iban;
     this.email = email;
+    this.stripeCustomerId = stripeCustomerId
+    this.userId = userId
   }
 
   static validFields = [

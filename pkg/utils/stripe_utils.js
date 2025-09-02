@@ -28,21 +28,46 @@ export async function CreatePayment(trx) {
 
   const paymentIntentParams = {
     amount: trx.amount,
-    currency: currency,
+    currency,
     payment_method_types: paymentTypes,
+    customer: trx.stripeCustomerId,
     confirm: true,
   };
 
   if (trx.paymentMethod === 'card') {
     paymentIntentParams.payment_method = 'pm_card_visa';
-  }
-  else if (['ach_direct_debit', 'sepa_debit'].includes(trx.paymentMethod)) {
+  } else if (trx.paymentMethod === 'ach_direct_debit') {
     paymentIntentParams.payment_method_data = {
-      type: trx.paymentMethod === 'ach_direct_debit' ? 'us_bank_account' : 'sepa_debit',
-      billing_details: { name: trx.accountholderName || 'Unknown', email: trx.email || 'unknown@mail.com' },
-      ...(trx.paymentMethod === 'ach_direct_debit'
-        ? { us_bank_account: { account_holder_type: 'individual', account_number: trx.accountNumber || '000123456789', routing_number: trx.routingNumber || '110000000' } }
-        : { sepa_debit: { iban: trx.iban || 'DE89370400440532013000' } }),
+      type: 'us_bank_account',
+      billing_details: {
+        name: trx.accountholderName || 'Unknown',
+        email: trx.email || 'unknown@mail.com',
+      },
+      us_bank_account: {
+        account_holder_type: 'individual',
+        account_number: trx.accountNumber || '000123456789',
+        routing_number: trx.routingNumber || '110000000',
+      },
+    };
+    paymentIntentParams.mandate_data = {
+      customer_acceptance: {
+        type: 'online',
+        online: {
+          ip_address: trx.ip || '127.0.0.1',
+          user_agent: trx.userAgent || 'Mozilla/5.0',
+        },
+      },
+    };
+  } else if (trx.paymentMethod === 'sepa_debit') {
+    paymentIntentParams.payment_method_data = {
+      type: 'sepa_debit',
+      billing_details: {
+        name: trx.accountholderName || 'Unknown',
+        email: trx.email || 'unknown@mail.com',
+      },
+      sepa_debit: {
+        iban: trx.iban || 'DE89370400440532013000',
+      },
     };
     paymentIntentParams.mandate_data = {
       customer_acceptance: {
@@ -55,13 +80,19 @@ export async function CreatePayment(trx) {
     };
   }
 
-  const paymentIntent = await stripe.paymentIntents.create(
-    paymentIntentParams,
-    { idempotencyKey: crypto.randomUUID() }
-  );
+  const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams, {
+    idempotencyKey: crypto.randomUUID(),
+  });
+
+  if (trx.paymentMethod === 'ach_direct_debit') {
+    if (paymentIntent.next_action?.verify_with_microdeposits) {
+      return paymentIntent.next_action.verify_with_microdeposits;
+    }
+  }
 
   return paymentIntent;
 }
+
 /**
  * @param { import('#entity/auth').UserEntity } auth
   */

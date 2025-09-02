@@ -18,8 +18,7 @@ export function CheckAccessToken(req, res, next) {
 
     const decoded = jwt.verify(token, env.app.jwtSecret);
 
-    req.user = decoded;
-
+    req.decoded = decoded;
     return next();
   } catch (err) {
     return res.status(401).json(response.errorResponse(401, "Invalid or expired token"));
