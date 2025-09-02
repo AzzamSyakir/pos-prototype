@@ -1,5 +1,5 @@
 import env from "#config/env_config";
-import { RegisterRoutes } from "#httpServer/routes/routes";
+import { RegisterRoutes } from "#routes/routes";
 import express from "express"
 // import { NewMiddliware } from "./middlewares/middleware.js";
 
