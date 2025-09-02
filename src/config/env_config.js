@@ -5,13 +5,14 @@ dotenv.config({
 }
 );
 
-class AppEnv {
-  constructor(appHost, appPort) {
-    this.APP_HOST = appHost;
-    this.APP_PORT = appPort;
+export class AppEnv {
+  constructor(appHost, appPort, jwtSecret) {
+    this.appHost = appHost;
+    this.appPort = appPort;
+    this.jwtSecret = jwtSecret
   }
 }
-class PaymentGatewayEnv {
+export class PaymentGatewayEnv {
   constructor(secretKey, publishableKey) {
     this.secretKey = secretKey;
     this.publishableKey = publishableKey;
@@ -40,6 +41,7 @@ function NewEnv() {
   const appEnv = new AppEnv(
     process.env.APP_HOST,
     process.env.APP_PORT,
+    process.env.JWT_SECRET
   );
 
   const dbEnv = new DbEnv(
@@ -56,7 +58,6 @@ function NewEnv() {
 
   return new EnvModule(appEnv, dbEnv, paymentGatewayEnv);
 }
-
 const env = NewEnv();
 
 export default env;

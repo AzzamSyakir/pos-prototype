@@ -9,8 +9,8 @@ export function AuthRoutes(app) {
     res.send("cihuy from auth");
   });
 
-  router.post("/", (req, res) => {
-    res.send("cihuy");
+  router.post("/login", (req, res) => {
+    authController.Login(req, res)
   });
   router.post("/register", (req, res) => {
     authController.Register(req, res)
