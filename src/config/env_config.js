@@ -12,6 +12,15 @@ export class AppEnv {
     this.jwtSecret = jwtSecret
   }
 }
+
+export class RedisEnv {
+  constructor(host, port, username, password) {
+    this.host = host;
+    this.port = port;
+    this.user = username;
+    this.password = password
+  }
+}
 export class PaymentGatewayEnv {
   constructor(secretKey, publishableKey) {
     this.secretKey = secretKey;
@@ -20,20 +29,21 @@ export class PaymentGatewayEnv {
 }
 
 class DbEnv {
-  constructor(dbUsername, dbPassword, dbHost, dbPort, dbDatabase) {
-    this.user = dbUsername;
-    this.password = dbPassword;
+  constructor(dbHost, dbPort, dbUsername, dbPassword, dbDatabase) {
     this.host = dbHost;
     this.port = dbPort;
+    this.user = dbUsername;
+    this.password = dbPassword;
     this.database = dbDatabase;
   }
 }
 
 class EnvModule {
-  constructor(appEnv, dbEnv, PaymentGatewayEnv) {
+  constructor(appEnv, dbEnv, PaymentGatewayEnv, redisEnv) {
     this.app = appEnv;
     this.db = dbEnv;
-    this.PaymentGateway = PaymentGatewayEnv
+    this.PaymentGateway = PaymentGatewayEnv;
+    this.redisEnv = redisEnv
   }
 }
 
@@ -43,12 +53,17 @@ function NewEnv() {
     process.env.APP_PORT,
     process.env.JWT_SECRET
   );
-
+  const redisEnv = new RedisEnv(
+    process.env.REDIS_HOST,
+    process.env.REDIS_PORT,
+    process.env.REDIS_USERNAME,
+    process.env.REDIS_PASSWORD
+  );
   const dbEnv = new DbEnv(
-    process.env.DB_USERNAME,
-    process.env.DB_PASSWORD,
     process.env.DB_HOST,
     process.env.DB_PORT,
+    process.env.DB_USERNAME,
+    process.env.DB_PASSWORD,
     process.env.DB_DATABASE,
   );
   const paymentGatewayEnv = new PaymentGatewayEnv(
@@ -56,7 +71,7 @@ function NewEnv() {
     process.env.STRIPE_PUBLISHABLE_KEY
   )
 
-  return new EnvModule(appEnv, dbEnv, paymentGatewayEnv);
+  return new EnvModule(appEnv, dbEnv, paymentGatewayEnv, redisEnv);
 }
 const env = NewEnv();
 

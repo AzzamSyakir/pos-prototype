@@ -1,5 +1,6 @@
 // redisconfig.js
 import { createClient } from "redis";
+import env from "#config/env_config";
 
 /**
  * @typedef {import('redis').RedisClientType} RedisClientType
@@ -36,8 +37,11 @@ let redisInstance = null;
  */
 export async function ConnectRedis() {
   if (redisInstance) return redisInstance;
-
-  const client = createClient();
+  const redisUrl = `redis://${env.redisEnv.host}:${env.redisEnv.port}`;
+  const client = createClient({
+    url: redisUrl,
+  }
+  );
   client.on("error", (err) => console.error("Redis Client Error:", err));
   await client.connect();
 
