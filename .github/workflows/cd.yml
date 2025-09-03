@@ -1,0 +1,32 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+     
+      - name: Stop and Remove Old Containers
+        run: make down-prod
+
+      - name: Remove Old Docker Images
+        run: |
+          echo "Removing unused images..."
+          docker image prune -af || true
+
+          echo "Removing dangling build cache..."
+          docker builder prune -af || true
+
+
+      - name: Run Docker
+        run: make up-prod
