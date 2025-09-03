@@ -43,6 +43,7 @@ jobs:
           echo "Removing dangling build cache..."
           docker builder prune -af || true
 
-
       - name: Run Docker
         run: make up-prod
+        env:
+          TERM: xterm-256color
