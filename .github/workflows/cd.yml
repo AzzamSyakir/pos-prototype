@@ -17,6 +17,9 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y gettext
           envsubst < .env.example > .env
+          echo "========== GENERATED .env =========="
+          cat .env
+          echo "===================================="
         env:
           APP_HOST: ${{ secrets.APP_HOST }}
           APP_PORT: ${{ secrets.APP_PORT }}
@@ -31,6 +34,7 @@ jobs:
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           SWAGGER_PORT: ${{ secrets.SWAGGER_PORT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
 
       - name: Stop and Remove Old Containers
         run: make down-prod
