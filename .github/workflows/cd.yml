@@ -12,25 +12,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-     
+        
       - name: Generate .env from secrets
         run: |
-          sudo apt-get update && sudo apt-get install -y gettext
-          envsubst < .env.example > .env
-        env:
-          APP_HOST: ${{ secrets.APP_HOST }}
-          APP_PORT: ${{ secrets.APP_PORT }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
-          SWAGGER_PORT: ${{ secrets.SWAGGER_PORT }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          cat > .env <<EOF
+          APP_HOST=${{ secrets.APP_HOST }}
+          APP_PORT=${{ secrets.APP_PORT }}
+          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
+          SWAGGER_PORT=${{ secrets.SWAGGER_PORT }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          EOF
+      
+          echo "========== GENERATED .env =========="
+          cat .env
+          echo "===================================="
+
+
 
       - name: Stop and Remove Old Containers
         run: make down-prod
