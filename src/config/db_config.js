@@ -1,6 +1,5 @@
 import { Client } from 'pg'
 import env from "#config/env_config";
-import { Pool } from 'pg'
 
 class PostgresDatabase {
   constructor(client) {
@@ -9,10 +8,10 @@ class PostgresDatabase {
 }
 async function NewDatabaseClient() {
   const client = new Client({
-    user: env.db.user,
-    password: env.db.password,
     host: env.db.host,
     port: env.db.port,
+    user: env.db.user,
+    password: env.db.password,
     database: env.db.database,
   })
   await client.connect()
@@ -20,9 +19,6 @@ async function NewDatabaseClient() {
     client
   )
   return client
-}
-async function name(params) {
-
 }
 const client = await NewDatabaseClient()
 export default client

@@ -13,6 +13,7 @@ down-dev:
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_PATH)/docker-compose.dev.yml down --remove-orphans
 
 up-prod:
+	@clear
 	docker compose --env-file $(ENV_FILE) -f $(COMPOSE_PATH)/docker-compose.prod.yml up -d
 
 down-prod:
