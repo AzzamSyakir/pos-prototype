@@ -61,9 +61,9 @@ services:
         depends_on:
             - app
         volumes:
-            - ../docs/api/swagger.json:/spec/docs/swagger.json
+            - ../docs/api/swagger.yml:/spec/docs/swagger.yml
         environment:
-            SWAGGER_JSON: /spec/docs/swagger.json
+            SWAGGER_JSON: /spec/docs/swagger.yml
 
 volumes:
     app-db:

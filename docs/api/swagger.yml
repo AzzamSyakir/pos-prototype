@@ -1,0 +1,399 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Pos-Prototype",
+    "description": "A simple POS API for restaurants and cafés. It is optimized for tablet-based mobile applications, supporting authentication, transactions, and reporting. Future releases may expand to smartphone apps, but the current focus is on tablets as the main POS device.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Developer",
+      "email": "azzam.sykir.work@gmail.com"
+    }
+  },
+  "externalDocs": {
+    "description": "GitHub Repository",
+    "url": "https://github.com/AzzamSyakir/pos-prototype"
+  },
+  "servers": [
+    {
+      "url": "https://pos-prototype-api.azzamsyakir.com",
+      "description": "Production server (HTTPS)"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "Local test server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter your bearer token in the format **Bearer <token>**"
+      }
+    },
+    "schemas": {
+      #register schemes
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Full name of the user. This field is optional; either name, email, or both can be provided.",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Unique email address of the user, used for authentication and communication.",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Password chosen by the user. It will be securely stored in the database after being hashed using the bcrypt algorithm.",
+            "example": "StrongPassword123!"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "Users phone number. This field is optional and can be used as an alternative contact method.",
+            "example": "081234567890"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RegisterSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP-like status code for the response."
+          },
+          "message": {
+            "type": "string",
+            "example": "Register success",
+            "description": "Response message indicating the result of the registration."
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "d12f3a45-6789-4bcd-9ef0-123456789abc",
+                "description": "Unique identifier of the registered user."
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe",
+                "description": "Full name of the registered user."
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "john.doe@example.com",
+                "description": "Email address of the registered user."
+              },
+              "password": {
+                "type": "string",
+                "example": "$2b$12$abcdefghijk1234567890lmnopqrstuvwxYZabcdEFGHijkLmNOpq",
+                "description": "Hashed password stored securely in the database."
+              },
+              "phone_number": {
+                "type": "string",
+                "example": "081234567890",
+                "description": "Phone number of the registered user."
+              },
+              "stripe_customer_id": {
+                "type": "string",
+                "example": "cus_1234567890abcdef",
+                "description": "Stripe customer ID linked to the registered user."
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-09-04T07:13:38.484Z",
+                "description": "Timestamp when the user was created."
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-09-04T07:13:38.484Z",
+                "description": "Timestamp when the user was last updated."
+              }
+            }
+          }
+        }
+      },
+      # login schemes
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "example.user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "strongpassword123"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "SignIn succeeded"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "access_token": {
+                "type": "string"
+              },
+              "refresh_token": {
+                "type": "string"
+              },
+              "token_type": {
+                "type": "string"
+              },
+              "expires_in": {
+                "type": "integer"
+              }
+            }
+          },
+          "status_code": {
+            "type": "integer",
+            "example": 200
+          }
+        }
+      },
+      #generateAccessToken schemes
+      "GenerateAccessTokenSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Access token generated successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "access_token": {
+                "type": "string"
+              },
+              "token_type": {
+                "type": "string"
+              },
+              "expires_in": {
+                "type": "integer"
+              }
+            }
+          },
+          "status_code": {
+            "type": "integer",
+            "example": 200
+          }
+        }
+      },
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Handles user authentication, including account registration, login, and secure token management."
+    },
+    {
+      "name": "Transactions",
+      "description": "Covers sales transaction operations, such as creating new transactions and retrieving transaction records."
+    }
+  ],
+  "paths": {
+    "/api/auths/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Creates a new user account and automatically provisions a Stripe customer for balance separation.",
+        "operationId": "Register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auths/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Authenticate user and get access and refresh token",
+        "operationId": "SignIn",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auths/access-token": {
+      "patch": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Generate a new access token using a refresh token",
+        "operationId": "GenerateAccessToken",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "The refresh token to generate a new access token.",
+                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                  }
+                },
+                "required": [
+                  "refresh_token"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New access token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateAccessTokenSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auths/generate-refresh-token": {
+      "patch": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Generate a new access token and refresh token",
+        "description": "This endpoint requires an existing access token to be authenticated. It's intended to be used when both access and refresh tokens need to be re-issued.",
+        "operationId": "GenerateRefreshToken",
+        "responses": {
+          "200": {
+            "description": "New access and refresh tokens generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateRefreshTokenSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid access token)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+}
+}
