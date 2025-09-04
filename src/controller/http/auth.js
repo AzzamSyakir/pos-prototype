@@ -43,12 +43,12 @@ export async function Login(req, res) {
       .json(response.errorResponse(500, err.message || "Internal server error"));
   }
 }
-export async function GenerateAccessToken(req, res) {
+export async function generateNewToken(req, res) {
   try {
-    const result = await authServices.GenerateAccessToken(req.decoded);
+    const result = await authServices.GenerateToken(req.decoded);
     return res
       .status(200)
-      .json(response.SuccessResponse(200, "GenerateAccessToken success", result));
+      .json(response.SuccessResponse(200, "GenerateToken success", result));
   } catch (err) {
     return res
       .status(500)

@@ -16,8 +16,8 @@ export function AuthRoutes(app) {
   router.post("/register", (req, res) => {
     authController.Register(req, res)
   });
-  router.post("/access-token", CheckRefreshToken, (req, res) => {
-    authController.GenerateAccessToken(req, res)
+  router.post("/generate-token", CheckRefreshToken, (req, res) => {
+    authController.generateNewToken(req, res)
   });
 
   app.use("/api/auths", router);
