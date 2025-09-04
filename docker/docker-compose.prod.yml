@@ -1,6 +1,6 @@
 services:
     app-db:
-        image: postgres:13.22
+        image: postgres:13.22-alpine3.21
         container_name: app-db
         restart: always
         tty: true
@@ -20,7 +20,7 @@ services:
             - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     redis:
-        image: redis:latest
+        image: redis:alpine3.22
         container_name: redis
         restart: always
         ports:
@@ -38,7 +38,7 @@ services:
     app:
         build:
             context: ../
-            dockerfile: docker/dockerfile
+            dockerfile: docker/dockerfile.prod
         container_name: app
         restart: no
         tty: true
