@@ -1,6 +1,6 @@
 services:
     app-db:
-        image: postgres:13.22
+        image: postgres:13.22-alpine3.21
         container_name: app-db
         restart: always
         tty: true
@@ -10,32 +10,23 @@ services:
             POSTGRES_DB: ${DB_DATABASE}
         ports:
             - ${DB_PORT}:5432
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
         volumes:
-            - app-db:/var/lib/postgresql
+            - app-db:/var/lib/postgresql/data
             - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
-    # app:
-    #     image: bukanasa/kitabantu-backend:app
-    #     container_name: app
-    #     restart: always
-    #     tty: true
-    #     depends_on:
-    #         - app-db
-    #         - rabbitmq
-    #     environment:
-    #         RABBITMQ_HOST: rabbitmq
-    #         DB_HOST: app-db
-    #         REDIS_HOST: redis
-    #     volumes:
-    #         - ../.:/var/www/
-    #     command: /bin/sh -c "sleep 5 && php artisan config:cache && php artisan migrate --force && php-fpm"
+
     swagger-ui:
-        image: swaggerapi/swagger-ui:latest
+        image: swaggerapi/swagger-ui:v5.28.1
         container_name: swagger-ui
         restart: unless-stopped
         ports:
             - ${SWAGGER_PORT}:8080
     redis:
-        image: redis:latest
+        image: redis:alpine3.22
         container_name: redis
         restart: always
         ports:
@@ -45,6 +36,30 @@ services:
         environment:
             REDIS_HOST: ${REDIS_HOST}
             REDIS_PORT: ${REDIS_PORT}
+        healthcheck:
+            test: [ "CMD", "redis-cli", "-a", "ping" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    app:
+        build:
+            context: ../
+            dockerfile: docker/dockerfile.dev
+        container_name: app
+        restart: no
+        tty: true
+        depends_on:
+            app-db:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        environment:
+            DB_HOST: app-db
+            REDIS_HOST: redis
+        ports:
+            - ${APP_PORT}:8080
+
 volumes:
     app-db:
     redis-data:
