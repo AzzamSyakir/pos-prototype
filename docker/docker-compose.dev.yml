@@ -25,8 +25,6 @@ services:
         restart: unless-stopped
         ports:
             - ${SWAGGER_PORT}:8080
-        depends_on:
-            - app
         volumes:
             - ../docs/api/swagger.yml:/spec/docs/swagger.yml
         environment:
@@ -47,24 +45,6 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
-
-    app:
-        build:
-            context: ../
-            dockerfile: docker/dockerfile.dev
-        container_name: app
-        restart: always
-        tty: true
-        depends_on:
-            app-db:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
-        environment:
-            DB_HOST: app-db
-            REDIS_HOST: redis
-        ports:
-            - ${APP_PORT}:8080
 
 volumes:
     app-db:

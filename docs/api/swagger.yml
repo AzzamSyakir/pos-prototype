@@ -179,34 +179,51 @@
           }
         }
       },
-      #generateAccessToken schemes
-      "GenerateAccessTokenSuccessResponse": {
+      #generateToken schemes
+      "GenerateTokenSuccessResponse": {
         "type": "object",
         "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
           "message": {
             "type": "string",
-            "example": "Access token generated successfully"
+            "example": "GenerateToken success"
           },
           "data": {
             "type": "object",
             "properties": {
               "access_token": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.accessTokenExample123"
+                  },
+                  "expiry": {
+                    "type": "string",
+                    "example": "5m"
+                  }
+                }
               },
-              "token_type": {
-                "type": "string"
-              },
-              "expires_in": {
-                "type": "integer"
+              "refresh_token": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refreshTokenExample456"
+                  },
+                  "expiry": {
+                    "type": "string",
+                    "example": "1d"
+                  }
+                }
               }
             }
-          },
-          "status_code": {
-            "type": "integer",
-            "example": 200
           }
         }
-      },
+      }
     }
   },
   "security": [
@@ -225,7 +242,7 @@
     }
   ],
   "paths": {
-    "/api/auths/register": {
+    "/api/auth/register": {
       "post": {
         "tags": [
           "Authentication"
@@ -256,7 +273,7 @@
         }
       }
     },
-    "/api/auths/login": {
+    "/api/auth/login": {
       "post": {
         "tags": [
           "Authentication"
@@ -287,7 +304,7 @@
         }
       }
     },
-    "/api/auths/access-token": {
+    "/api/auth/generate-token": {
       "patch": {
         "tags": [
           "Authentication"
@@ -320,79 +337,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenerateAccessTokenSuccessResponse"
+                  "$ref": "#/components/schemas/GenerateTokenSuccessResponse"
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid refresh token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
         }
-      }
-    },
-    "/api/auths/generate-refresh-token": {
-      "patch": {
-        "tags": [
-          "Authentication"
-        ],
-        "summary": "Generate a new access token and refresh token",
-        "description": "This endpoint requires an existing access token to be authenticated. It's intended to be used when both access and refresh tokens need to be re-issued.",
-        "operationId": "GenerateRefreshToken",
-        "responses": {
-          "200": {
-            "description": "New access and refresh tokens generated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenerateRefreshTokenSuccessResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized (missing or invalid access token)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       }
     },
 }

@@ -24,5 +24,5 @@ export function AuthRoutes(app) {
     authController.generateNewToken(req, res)
   });
 
-  app.use("/api/auths", router);
+  app.use("/api/auth", router);
 }
