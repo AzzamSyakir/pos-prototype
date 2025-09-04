@@ -84,6 +84,22 @@ export async function Login(dto) {
     },
   };
 }
+export async function Logout(decodedData) {
+  if (!decodedData.userId) {
+    throw new Error("Invalid user data");
+  }
+
+  const refreshTokenRedisKey = `refresh_token:${decodedData.userId}`;
+  const deletedCount = await redis.del(refreshTokenRedisKey);
+
+  if (deletedCount === 0) {
+    throw new Error("No refresh token found");
+  }
+
+  return { key: refreshTokenRedisKey };
+}
+
+
 export async function GenerateToken(decodedData) {
 
   var jwtPayload = {

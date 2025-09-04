@@ -43,6 +43,18 @@ export async function Login(req, res) {
       .json(response.errorResponse(500, err.message || "Internal server error"));
   }
 }
+export async function Logout(req, res) {
+  try {
+    const result = await authServices.Logout(req.decoded);
+    return res
+      .status(200)
+      .json(response.SuccessResponse(200, "Logout success", result));
+  } catch (err) {
+    return res
+      .status(500)
+      .json(response.errorResponse(500, err.message || "Internal server error"));
+  }
+}
 export async function generateNewToken(req, res) {
   try {
     const result = await authServices.GenerateToken(req.decoded);
