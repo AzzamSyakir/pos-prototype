@@ -17,8 +17,8 @@ export async function Register(req, res) {
     const dto = authDto.AuthRegisterDto.fromRequest(req.body);
     const result = await authServices.Register(dto);
     return res
-      .status(200)
-      .json(response.SuccessResponse(200, "Register success", result));
+      .status(201)
+      .json(response.SuccessResponse(201, "Register success", result));
   } catch (err) {
     return res
       .status(500)
