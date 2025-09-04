@@ -20,11 +20,17 @@ services:
             - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     swagger-ui:
-        image: swaggerapi/swagger-ui:v5.28.1
+        image: swaggerapi/swagger-ui:latest
         container_name: swagger-ui
         restart: unless-stopped
         ports:
             - ${SWAGGER_PORT}:8080
+        depends_on:
+            - app
+        volumes:
+            - ../docs/api/swagger.json:/spec/docs/swagger.json
+        environment:
+            SWAGGER_JSON: /spec/docs/swagger.json
     redis:
         image: redis:alpine3.22
         container_name: redis
