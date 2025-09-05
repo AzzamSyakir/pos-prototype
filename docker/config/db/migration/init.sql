@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE
   users (
-    id UUID PRIMARY KEY,
+    id UUID PRIMARY KEY NOT NULL,
     name VARCHAR,
     email VARCHAR,
     password VARCHAR NOT NULL,
