@@ -5,22 +5,21 @@ import * as transactionRepo from '#repository/transaction'
  * @param {import('#dto/transaction').TransactionDto} dto
  */
 export async function CreateTransaction(dto) {
+  const userEmail = await transactionRepo.GetUserEmailByUserId(dto.userId)
   const trx = new TransactionEntity(
     crypto.randomUUID(),
     dto.amount,
     dto.paymentMethod,
     dto.accountholderName,
-    dto.email,
+    userEmail,
     dto.accountNumber,
     dto.routingNumber,
     dto.userId,
     dto.stripeCustomerId,
   );
-
   const currentTime = new Date();
 
   const result = await transactionRepo.CreateTransaction(trx, currentTime);
-
   const payment = await stripeUtils.CreatePayment(trx);
 
   const response = {
