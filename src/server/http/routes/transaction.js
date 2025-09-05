@@ -8,7 +8,7 @@ export function TransactionRoutes(app) {
   const router = express.Router();
   router.use(CheckAccessToken);
   router.get("/", (req, res) => {
-    res.send("GET all transactions");
+    transactionController.FetchTransaction(req, res)
   });
   router.post("/", (req, res) => {
     transactionController.CreateTransaction(req, res)

@@ -34,3 +34,17 @@ export async function CreateTransaction(trx, currentTime) {
   const result = await db.query(query, values);
   return result.rows[0];
 }
+
+export async function FetchTransaction(userId) {
+  console.log()
+  const query = `
+    SELECT * 
+    FROM transactions 
+    WHERE user_id = $1
+  `;
+
+  const values = [userId];
+
+  const result = await db.query(query, values);
+  return result.rows;
+}

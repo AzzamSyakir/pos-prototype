@@ -34,3 +34,21 @@ export async function CreateTransaction(dto) {
   }
   return response;
 }
+export async function FetchTransaction(userId) {
+  const result = await transactionRepo.FetchTransaction(userId);
+
+  if (!result || result.length === 0) {
+    return {
+      success: false,
+      message: "Transaction not found",
+      data: null
+    };
+  }
+
+  return {
+    success: true,
+    message: "Transaction fetched successfully",
+    data: result
+  };
+}
+
