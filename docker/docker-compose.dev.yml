@@ -20,7 +20,7 @@ services:
             - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     swagger-ui:
-        image: swaggerapi/swagger-ui:latest
+        image: swaggerapi/swagger-ui:v5.28.1
         container_name: swagger-ui
         restart: unless-stopped
         ports:
@@ -45,6 +45,24 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+
+    app:
+        build:
+            context: ../
+            dockerfile: docker/dockerfile.dev
+        container_name: app
+        restart: no
+        tty: true
+        depends_on:
+            app-db:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        environment:
+            DB_HOST: app-db
+            REDIS_HOST: redis
+        ports:
+            - ${APP_PORT}:8080
 
 volumes:
     app-db:
