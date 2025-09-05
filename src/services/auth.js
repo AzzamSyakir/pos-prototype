@@ -84,7 +84,23 @@ export async function Login(dto) {
     },
   };
 }
-export async function GenerateAccessToken(decodedData) {
+export async function Logout(decodedData) {
+  if (!decodedData.userId) {
+    throw new Error("Invalid user data");
+  }
+
+  const refreshTokenRedisKey = `refresh_token:${decodedData.userId}`;
+  const deletedCount = await redis.del(refreshTokenRedisKey);
+
+  if (deletedCount === 0) {
+    throw new Error("No refresh token found");
+  }
+
+  return { key: refreshTokenRedisKey };
+}
+
+
+export async function GenerateToken(decodedData) {
 
   var jwtPayload = {
     userId: decodedData.userId,
@@ -93,10 +109,25 @@ export async function GenerateAccessToken(decodedData) {
   var accessExpiry = env.app.accessTokenExpiry || "5m";
   var accessToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: accessExpiry });
 
+  var refreshExpiry = env.app.accesrefreshTokenExpiry || "1d";
+  var refreshToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: refreshExpiry });
+
+  const redisKeyRefreshToken = `refresh_token:${decodedData.id}`;
+
+  const redisPayloadRefreshToken = {
+    token: refreshToken,
+    expiry: refreshExpiry,
+  };
+
+  await redis.set(redisKeyRefreshToken, JSON.stringify(redisPayloadRefreshToken));
   return {
     access_token: {
       token: accessToken,
       expiry: accessExpiry,
     },
-  }
+    refresh_token: {
+      token: refreshToken,
+      expiry: refreshExpiry,
+    },
+  };
 }

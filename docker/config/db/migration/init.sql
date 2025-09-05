@@ -4,11 +4,11 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE
   users (
-    id UUID PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    email VARCHAR NOT NULL,
+    id UUID PRIMARY KEY NOT NULL,
+    name VARCHAR,
+    email VARCHAR,
     password VARCHAR NOT NULL,
-    phone_number VARCHAR NOT NULL,
+    phone_number VARCHAR,
     stripe_customer_id VARCHAR,
     created_at TIMESTAMP,
     updated_at TIMESTAMP

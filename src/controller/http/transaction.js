@@ -16,12 +16,32 @@ export async function CreateTransaction(req, res) {
     }
     const dto = TransactionDto.fromRequest(req.body);
     dto.stripeCustomerId = req.decoded.stripe_cus_id;
-    dto.userId = req.decoded.userId
+    dto.userId = req.decoded.userId;
     const result = await transactionServices.CreateTransaction(dto);
 
     return res
       .status(200)
       .json(response.SuccessResponse(200, "Transaction created successfully", result));
+  } catch (err) {
+    return res
+      .status(500)
+      .json(response.errorResponse(500, err.message || "Internal server error"));
+  }
+}
+export async function FetchTransaction(req, res) {
+  try {
+    const userId = req.decoded.userId;
+    const serviceResult = await transactionServices.FetchTransaction(userId);
+
+    if (!serviceResult.success) {
+      return res
+        .status(404)
+        .json(response.errorResponse(404, serviceResult.message));
+    }
+
+    return res
+      .status(200)
+      .json(response.SuccessResponse(200, serviceResult.message, serviceResult.data));
   } catch (err) {
     return res
       .status(500)

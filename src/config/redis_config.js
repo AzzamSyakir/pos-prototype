@@ -24,10 +24,6 @@ class Redis {
   async del(key) {
     return this.client.del(key);
   }
-
-  async setEx(key, ttl, value) {
-    return this.client.setEx(key, ttl, value);
-  }
 }
 
 let redisInstance = null;

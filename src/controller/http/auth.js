@@ -17,8 +17,8 @@ export async function Register(req, res) {
     const dto = authDto.AuthRegisterDto.fromRequest(req.body);
     const result = await authServices.Register(dto);
     return res
-      .status(200)
-      .json(response.SuccessResponse(200, "Register success", result));
+      .status(201)
+      .json(response.SuccessResponse(201, "Register success", result));
   } catch (err) {
     return res
       .status(500)
@@ -43,12 +43,24 @@ export async function Login(req, res) {
       .json(response.errorResponse(500, err.message || "Internal server error"));
   }
 }
-export async function GenerateAccessToken(req, res) {
+export async function Logout(req, res) {
   try {
-    const result = await authServices.GenerateAccessToken(req.decoded);
+    const result = await authServices.Logout(req.decoded);
     return res
       .status(200)
-      .json(response.SuccessResponse(200, "GenerateAccessToken success", result));
+      .json(response.SuccessResponse(200, "Logout success", result));
+  } catch (err) {
+    return res
+      .status(500)
+      .json(response.errorResponse(500, err.message || "Internal server error"));
+  }
+}
+export async function generateNewToken(req, res) {
+  try {
+    const result = await authServices.GenerateToken(req.decoded);
+    return res
+      .status(200)
+      .json(response.SuccessResponse(200, "GenerateToken success", result));
   } catch (err) {
     return res
       .status(500)
