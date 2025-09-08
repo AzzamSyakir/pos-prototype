@@ -46,24 +46,14 @@ services:
             timeout: 5s
             retries: 5
 
-    app:
-        build:
-            context: ../
-            dockerfile: docker/dockerfile.dev
-        container_name: app
-        restart: no
-        tty: true
-        depends_on:
-            app-db:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
+    ngrok:
+        image: ngrok/ngrok
+        container_name: ngrok
+        restart: always
+        network_mode: host
         environment:
-            DB_HOST: app-db
-            REDIS_HOST: redis
-        ports:
-            - ${APP_PORT}:8080
-
+            - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+        command: http --domain=${NGROK_DOMAIN} ${NGROK_PORT}
 volumes:
     app-db:
     redis-data:
