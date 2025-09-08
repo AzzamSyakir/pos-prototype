@@ -1,4 +1,4 @@
-import * as transactionServices from "#services/transaction";
+import * as webhookServices from "#services/webhook";
 import { StripePaymentIntentEventDto } from '#dto/webhook';
 import * as response from '#utils/response_utils'
 /**
@@ -15,8 +15,7 @@ export async function UpdateTransactionStatus(req, res) {
         .json(response.errorResponse(400, validation.message || "request validation failed"));
     }
     const dto = StripePaymentIntentEventDto.fromRequest(req.body);
-    console.log(dto);
-    const result = await transactionServices.CreateTransaction(dto);
+    const result = await webhookServices.UpdateTransactionStatus(dto);
 
     return res
       .status(200)
