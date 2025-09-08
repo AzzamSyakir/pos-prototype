@@ -20,7 +20,7 @@ services:
             - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     swagger-ui:
-        image: swaggerapi/swagger-ui:latest
+        image: swaggerapi/swagger-ui:v5.28.1
         container_name: swagger-ui
         restart: unless-stopped
         ports:
