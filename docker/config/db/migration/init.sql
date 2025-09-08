@@ -18,7 +18,7 @@ CREATE TABLE
   transactions (
     id UUID PRIMARY KEY,
     amount NUMERIC(15, 2) NOT NULL,
-    status VARCHAR(20) CHECK (status IN ('success', 'pending', 'failed')),
+    status VARCHAR(20),
     payment_method VARCHAR(20),
     user_id UUID NOT NULL,
     created_at TIMESTAMP,
