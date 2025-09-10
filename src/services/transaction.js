@@ -28,6 +28,7 @@ export async function CreateTransaction(dto) {
   };
   return response;
 }
+
 export async function FetchTransaction(userId) {
   const result = await transactionRepo.FetchTransaction(userId);
 
@@ -46,3 +47,22 @@ export async function FetchTransaction(userId) {
   };
 }
 
+export async function CalculateOmzet(userId) {
+  const omzet = await transactionRepo.FetchTransactionOmzet(userId);
+
+  if (!omzet || omzet.length === 0) {
+    return {
+      code: 404,
+      message: "Transaction not found",
+      data: null
+    };
+  }
+
+  return {
+    code: 200,
+    message: "Omzet calculated successfully",
+    data: {
+      totalOmzet: omzet
+    }
+  };
+}
