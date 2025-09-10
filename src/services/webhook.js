@@ -8,17 +8,15 @@ import redis from "#config/redis_config";
 import * as authDto from '#dto/auth';
 
 /**
- * @param {import('#dto/webhook').StripePaymentIntentEventDto} dto
+ * @param {import('#dto/webhook').StripePaymentEventDto} dto
  */
 export async function UpdateTransactionStatus(dto) {
-  const user = await webhookRepo.GetUserByStripeCustomerId(dto.customer)
-  const userId = user?.id;
-
-  console.log(`userId : ${userId}`)
-  console.log(`type : ${dto.type}`)
-
   const currentTime = new Date();
-  await webhookRepo.UpdateLatestTransactionStatusByUserId(userId, dto.type, currentTime)
+  if (dto.status == 'paid') {
+    dto.status = 'succeeded'
+  }
+  console.log(dto.status)
+  await webhookRepo.UpdateTransactionStatusByPaymentId(dto.paymentId, dto.status, currentTime)
 
   return null
 }
