@@ -7,12 +7,7 @@ import { CheckAccessToken } from "#middleware/check_access_token";
 export function TransactionRoutes(app) {
   const router = express.Router();
   router.use(CheckAccessToken);
-  router.get("/", (req, res) => {
-    transactionController.FetchTransaction(req, res)
-  });
-  router.post("/", (req, res) => {
-    transactionController.CreateTransaction(req, res)
-  });
-
-  app.use("/api/transaction", router, CheckAccessToken);
+  router.get("/", transactionController.FetchTransaction);
+  router.post("/", transactionController.CreateTransaction);
+  app.use("/api/transaction", router);
 }
