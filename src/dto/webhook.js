@@ -1,41 +1,48 @@
-export class StripePaymentIntentEventDto {
-  constructor({ id, type, created, livemode, paymentIntent, customer }) {
+export class StripePaymentEventDto {
+  constructor({ id, type, created, livemode, paymentId, customer, status }) {
     this.id = id;
     this.type = type;
     this.created = created;
     this.livemode = livemode;
-    this.paymentIntent = paymentIntent;
+    this.paymentId = paymentId;
     this.customer = customer;
+    this.status = status;
   }
-
-  static validFields = [
-    "id",
-    "object",
-    "api_version",
-    "created",
-    "data",
-    "livemode",
-    "pending_webhooks",
-    "request",
-    "type",
-    "customer",
-  ];
 
   static fromRequest(body) {
     const rawType = body.type ?? "";
-    const simpleType = rawType.startsWith("payment_intent.")
-      ? rawType.replace("payment_intent.", "")
-      : rawType;
+    const obj = body.data?.object ?? {};
 
-    const paymentIntent = body.data?.object ?? {};
+    let paymentId = null;
 
-    return new StripePaymentIntentEventDto({
+    if (rawType.startsWith("checkout.session")) {
+      paymentId = obj.payment_link ?? null;
+    } else {
+      paymentId = obj.payment_intent ?? obj.id ?? null;
+    }
+
+    const customer = obj.customer ?? null;
+
+    let status = null;
+
+    if (rawType.startsWith("checkout.session")) {
+      status = obj.payment_status ?? obj.status ?? null;
+    } else if (rawType.startsWith("payment_intent.")) {
+      const parts = rawType.split(".");
+      status = parts[parts.length - 1];
+    } else if (rawType.startsWith("payment_link.")) {
+      const parts = rawType.split(".");
+      status = parts[parts.length - 1];
+    }
+
+    return new StripePaymentEventDto({
       id: body.id,
-      type: simpleType,
+      type: rawType,
       created: body.created,
       livemode: body.livemode,
-      paymentIntent,
-      customer: paymentIntent.customer ?? null,
+      paymentId,
+      customer,
+      status,
     });
   }
 
@@ -44,8 +51,7 @@ export class StripePaymentIntentEventDto {
     const safeBody = body ?? {};
 
     ["id", "type", "created", "data"].forEach((f) => {
-      const value = safeBody[f];
-      if (value === undefined || value === null) {
+      if (safeBody[f] === undefined || safeBody[f] === null) {
         errors.push(`${f} is required`);
       }
     });
@@ -53,9 +59,20 @@ export class StripePaymentIntentEventDto {
     if (safeBody.id && typeof safeBody.id !== "string") {
       errors.push("id must be a string");
     }
-    if (safeBody.type && !safeBody.type.startsWith("payment_intent.")) {
-      errors.push("type must be a payment_intent event");
+
+    if (
+      safeBody.type &&
+      !(
+        safeBody.type.startsWith("payment_intent.") ||
+        safeBody.type.startsWith("checkout.session.") ||
+        safeBody.type.startsWith("payment_link.")
+      )
+    ) {
+      errors.push(
+        "type must be payment_intent.*, checkout.session.*, or payment_link.*"
+      );
     }
+
     if (safeBody.created && typeof safeBody.created !== "number") {
       errors.push("created must be a number (timestamp)");
     }

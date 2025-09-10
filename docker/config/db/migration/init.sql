@@ -21,6 +21,7 @@ CREATE TABLE
     status VARCHAR(20),
     payment_method VARCHAR(20),
     user_id UUID NOT NULL,
+    stripe_payment_id VARCHAR,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     CONSTRAINT fk_transactions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE

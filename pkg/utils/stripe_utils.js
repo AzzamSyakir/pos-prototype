@@ -84,10 +84,13 @@ export async function CreatePayment(trx) {
   const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams, {
     idempotencyKey: crypto.randomUUID(),
   });
-
-  if (trx.paymentMethod === 'ach_direct_debit') {
-    if (paymentIntent.next_action?.verify_with_microdeposits) {
-      return paymentIntent.next_action.verify_with_microdeposits;
+  if (trx.paymentMethod === "ach_direct_debit") {
+    const microDepositAction = paymentIntent.next_action?.verify_with_microdeposits;
+    if (microDepositAction) {
+      return {
+        id: paymentIntent.id,
+        verification: microDepositAction,
+      };
     }
   }
 
