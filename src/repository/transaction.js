@@ -64,3 +64,17 @@ export async function GetUserEmailByUserId(id) {
   const email = result.rows[0].email;
   return email;
 }
+
+export async function FetchTransactionOmzet(userId) {
+  const query = `
+    SELECT COALESCE(SUM(amount), 0) AS total_omzet
+    FROM transactions 
+    WHERE user_id = $1
+      AND status = 'succeeded'
+  `;
+
+  const values = [userId];
+  const result = await db.query(query, values);
+
+  return result.rows[0]?.total_omzet || 0;
+}

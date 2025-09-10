@@ -9,5 +9,7 @@ export function TransactionRoutes(app) {
   router.use(CheckAccessToken);
   router.get("/", transactionController.FetchTransaction);
   router.post("/", transactionController.CreateTransaction);
+
+  router.get("/calculate/omzet", transactionController.CalculateOmzet);
   app.use("/api/transaction", router);
 }
