@@ -8,18 +8,18 @@ export class TransactionEntity {
     accountNumber,
     routingNumber,
     userId,
-    stripeCustomerId
+    stripePaymentId
   ) {
     this.id = id;
     this.amount = amount;
-    this.status = "pending";
+    this.status = null;
     this.paymentMethod = paymentMethod;
     this.userId = userId;
-    this.stripeCustomerId = stripeCustomerId;
     this.accountholderName = accountholderName;
     this.email = email;
     this.accountNumber = accountNumber;
     this.routingNumber = routingNumber;
+    this.StripePaymentId = stripePaymentId
   }
 
 
