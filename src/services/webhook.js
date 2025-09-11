@@ -15,7 +15,6 @@ export async function UpdateTransactionStatus(dto) {
   if (dto.status == 'paid') {
     dto.status = 'succeeded'
   }
-  console.log(dto.status)
   await webhookRepo.UpdateTransactionStatusByPaymentId(dto.paymentId, dto.status, currentTime)
 
   return null

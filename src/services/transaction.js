@@ -1,6 +1,8 @@
 import { TransactionEntity } from '#entity/transaction'
 import * as stripeUtils from '#utils/stripe_utils'
 import * as transactionRepo from '#repository/transaction'
+import * as capitalRepo from '#repository/capitals'
+import { normalizeModal } from "#utils/calculate_utils";
 /**
  * @param {import('#dto/transaction').TransactionDto} dto
  */
@@ -16,11 +18,10 @@ export async function CreateTransaction(dto) {
     dto.routingNumber,
     dto.userId,
   );
-  const currentTime = new Date();
 
   const payment = await stripeUtils.CreatePayment(trx);
-  trx.StripePaymentId = payment.id
-  const result = await transactionRepo.CreateTransaction(trx, currentTime);
+  trx.stripePaymentId = payment.id
+  const result = await transactionRepo.CreateTransaction(trx);
   const response = {
     status: 'success',
     transaction: result,
@@ -46,23 +47,40 @@ export async function FetchTransaction(userId) {
     data: result
   };
 }
+/**
+ * @param {import('#dto/transaction').TransactionSummary} dto
+ */
+export async function CalculateSummary(userId, dto) {
+  const omzet = await transactionRepo.FetchTransactionOmzet(userId, dto.targetLevel);
 
-export async function CalculateOmzet(userId) {
-  const omzet = await transactionRepo.FetchTransactionOmzet(userId);
-
-  if (!omzet || omzet.length === 0) {
+  if (!omzet || omzet == 0) {
     return {
-      code: 404,
-      message: "Transaction not found",
-      data: null
+      status: false,
+      data: null,
+      message: "Transaction not found"
     };
   }
 
+  const capital = await capitalRepo.FetchUserCapital(userId);
+
+  let normalizedCapital = 0;
+  if (capital) {
+    normalizedCapital = normalizeModal(
+      capital.amount,
+      capital.type,
+      dto.targetLevel
+    );
+  }
+
+  const profit = omzet - normalizedCapital;
+
   return {
-    code: 200,
-    message: "Omzet calculated successfully",
+    status: true,
     data: {
-      totalOmzet: omzet
-    }
+      omzet,
+      capital: normalizedCapital,
+      profit
+    },
+    message: "Summary calculated successfully"
   };
 }

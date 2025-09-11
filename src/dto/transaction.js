@@ -86,3 +86,21 @@ export class TransactionDto {
     };
   }
 }
+export class TransactionSummary {
+  static allowedTargetLevels = ["day", "week", "month", "year"];
+
+  constructor({ targetLevel }) {
+    this.targetLevel = targetLevel;
+    this.validate();
+  }
+
+  validate() {
+    if (
+      !TransactionSummary.allowedTargetLevels.includes(this.targetLevel)
+    ) {
+      throw new Error(
+        `targetLevel must be one of: ${TransactionSummary.allowedTargetLevels.join(", ")}`
+      );
+    }
+  }
+}

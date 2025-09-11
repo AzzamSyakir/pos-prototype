@@ -10,6 +10,7 @@ export function TransactionRoutes(app) {
   router.get("/", transactionController.FetchTransaction);
   router.post("/", transactionController.CreateTransaction);
 
-  router.get("/calculate/omzet", transactionController.CalculateOmzet);
+  router.get("/calculate/summary/:targetLevel", transactionController.CalculateSummary);
+  // router.post("/calculate/add-modal/:targetLevel", transactionController.CalculateProfit);
   app.use("/api/transaction", router);
 }
