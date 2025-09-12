@@ -1,5 +1,5 @@
 import * as transactionServices from "#services/transaction";
-import { TransactionDto, TransactionSummary } from '#dto/transaction';
+import { TransactionDto } from '#dto/transaction';
 import * as response from '#utils/response_utils'
 /**
  * @param {import('express').Request} req
@@ -43,26 +43,6 @@ export async function FetchTransaction(req, res) {
     return res
       .status(200)
       .json(response.SuccessResponse(200, serviceResult.message, serviceResult.data));
-  } catch (err) {
-    return res
-      .status(500)
-      .json(response.errorResponse(500, err.message || "Internal server error"));
-  }
-}
-
-export async function CalculateSummary(req, res) {
-  try {
-    const dto = new TransactionSummary({ targetLevel: req.params.targetLevel })
-    const userId = req.decoded.userId;
-    const result = await transactionServices.CalculateSummary(userId, dto);
-    if (result.status === false) {
-      return res
-        .status(500)
-        .json(response.SuccessResponse(500, `calculate transaction failed : ${result.message}`, result.data));
-    }
-    return res
-      .status(200)
-      .json(response.SuccessResponse(200, "transaction calculated successfully", result));
   } catch (err) {
     return res
       .status(500)
