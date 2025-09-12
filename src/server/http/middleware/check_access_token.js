@@ -17,7 +17,6 @@ export function CheckAccessToken(req, res, next) {
     const token = parts[1];
 
     const decoded = jwt.verify(token, env.app.jwtSecret);
-
     req.decoded = decoded;
     return next();
   } catch (err) {

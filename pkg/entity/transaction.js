@@ -19,7 +19,7 @@ export class TransactionEntity {
     this.email = email;
     this.accountNumber = accountNumber;
     this.routingNumber = routingNumber;
-    this.StripePaymentId = stripePaymentId
+    this.stripePaymentId = stripePaymentId
   }
 
 

@@ -49,17 +49,3 @@ export async function FetchTransaction(req, res) {
       .json(response.errorResponse(500, err.message || "Internal server error"));
   }
 }
-
-export async function CalculateOmzet(req, res) {
-  try {
-    const userId = req.decoded.userId;
-    const result = await transactionServices.CalculateOmzet(userId);
-    return res
-      .status(200)
-      .json(response.SuccessResponse(200, "omzet calculated successfully", result));
-  } catch (err) {
-    return res
-      .status(500)
-      .json(response.errorResponse(500, err.message || "Internal server error"));
-  }
-}

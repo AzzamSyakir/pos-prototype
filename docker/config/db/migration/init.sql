@@ -26,3 +26,16 @@ CREATE TABLE
     updated_at TIMESTAMP,
     CONSTRAINT fk_transactions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
+
+CREATE TYPE capital_type AS ENUM ('day', 'week', 'month', 'year');
+
+CREATE TABLE
+  capitals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+    user_id UUID NOT NULL,
+    amount NUMERIC(15, 2) NOT NULL,
+    type capital_type NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now (),
+    updated_at TIMESTAMP NOT NULL DEFAULT now (),
+    CONSTRAINT fk_capitals_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );

@@ -16,11 +16,10 @@ export async function CreateTransaction(dto) {
     dto.routingNumber,
     dto.userId,
   );
-  const currentTime = new Date();
 
   const payment = await stripeUtils.CreatePayment(trx);
-  trx.StripePaymentId = payment.id
-  const result = await transactionRepo.CreateTransaction(trx, currentTime);
+  trx.stripePaymentId = payment.id
+  const result = await transactionRepo.CreateTransaction(trx);
   const response = {
     status: 'success',
     transaction: result,
@@ -44,25 +43,5 @@ export async function FetchTransaction(userId) {
     success: true,
     message: "Transaction fetched successfully",
     data: result
-  };
-}
-
-export async function CalculateOmzet(userId) {
-  const omzet = await transactionRepo.FetchTransactionOmzet(userId);
-
-  if (!omzet || omzet.length === 0) {
-    return {
-      code: 404,
-      message: "Transaction not found",
-      data: null
-    };
-  }
-
-  return {
-    code: 200,
-    message: "Omzet calculated successfully",
-    data: {
-      totalOmzet: omzet
-    }
   };
 }
