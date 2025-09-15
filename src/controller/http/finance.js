@@ -13,8 +13,8 @@ export async function CalculateFinanceSummary(req, res) {
     const result = await calculateServices.CalculateFinanceSummary(dto);
     if (result.status === false) {
       return res
-        .status(500)
-        .json(response.SuccessResponse(500, `calculate summary failed : ${result.message}`, result.data));
+        .status(result.code)
+        .json(response.SuccessResponse(result.code, `calculate summary failed : ${result.message}`, result.data));
     }
     return res
       .status(200)
