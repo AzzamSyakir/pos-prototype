@@ -11,6 +11,7 @@ export async function CalculateFinanceSummary(dto) {
     return {
       status: false,
       data: null,
+      code: 500,
       message: "Transaction not found"
     };
   }
