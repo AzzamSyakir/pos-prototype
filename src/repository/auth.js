@@ -36,7 +36,18 @@ export async function CreateUser(userEntity, currentTime) {
   const result = await db.query(query, values);
   return result.rows[0];
 }
+export async function FindUserByEmailOrPhone(email, phone_number) {
+  const query = `
+    SELECT id, name, email, phone_number, stripe_customer_id
+    FROM users
+    WHERE email = $1 OR phone_number = $2
+    LIMIT 1
+  `;
+  const values = [email, phone_number];
 
+  const result = await db.query(query, values);
+  return result.rows[0] || null;
+}
 export async function GetUserCredentialsByEmail(email) {
   const query = `
     SELECT id ,password, stripe_customer_id
