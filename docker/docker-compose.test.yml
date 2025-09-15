@@ -1,0 +1,40 @@
+services:
+    app-db-test:
+        image: postgres:13.22-alpine3.21
+        container_name: app-db-test
+        restart: always
+        tty: true
+        environment:
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_DATABASE}
+        ports:
+            - ${DB_PORT}:5432
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - app-db-test:/var/lib/postgresql/data
+            - ./config/db/migration/init.sql:/docker-entrypoint-initdb.d/init.sql
+    redis-test:
+        image: redis:alpine3.22
+        container_name: redis-test
+        restart: always
+        ports:
+            - ${REDIS_PORT}:6379
+        volumes:
+            - redis-data-test:/data
+        environment:
+            REDIS_HOST: ${REDIS_HOST}
+            REDIS_PORT: ${REDIS_PORT}
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    app-db-test:
+    redis-data-test:
