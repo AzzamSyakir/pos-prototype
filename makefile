@@ -26,7 +26,7 @@ restart-dev:
 restart-prod:
 	make down-prod && make up-prod
 
-test:
+start-test:
 	@clear
 	docker compose --env-file $(ENV_FILE_TEST) -f $(COMPOSE_PATH)/docker-compose.test.yml up -d
 	@echo "Waiting for all services to be healthy..."
