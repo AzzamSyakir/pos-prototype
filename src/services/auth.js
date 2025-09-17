@@ -148,7 +148,7 @@ export async function Login(dto) {
     return {
       status: true,
       code: 200,
-      message: "Login successful",
+      message: "Login success",
       data: {
         access_token: {
           token: accessToken,
