@@ -32,7 +32,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest"
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --setupFiles=./src/config/env_config.js --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
