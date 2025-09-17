@@ -22,7 +22,7 @@ export async function Register(req, res) {
         .json(response.SuccessResponse(result.code, `Register failed : ${result.message}`, result.data));
     }
     return res
-      .status(201)
+      .status(result.code)
       .json(response.SuccessResponse(result.code, result.message, result.data));
   } catch (err) {
     return res
@@ -45,8 +45,8 @@ export async function Login(req, res) {
         .json(response.SuccessResponse(result.code, `Login failed : ${result.message}`, result.data));
     }
     return res
-      .status(200)
-      .json(response.SuccessResponse(200, "Login success", result));
+      .status(result.code)
+      .json(response.SuccessResponse(result.code, result.message, result.data));
   } catch (err) {
     return res
       .status(500)
@@ -55,6 +55,15 @@ export async function Login(req, res) {
 }
 export async function Logout(req, res) {
   try {
+    const { valid, message } = authDto.AuthGenerateTokenDto.validateFormRequest(req.body);
+
+    if (!valid) {
+      return res.status(400).json({
+        code: 400,
+        data: null,
+        message,
+      });
+    }
     const result = await authServices.Logout(req.decoded);
     return res
       .status(200)
@@ -67,6 +76,15 @@ export async function Logout(req, res) {
 }
 export async function generateNewToken(req, res) {
   try {
+    const { valid, message } = authDto.AuthGenerateTokenDto.validateFormRequest(req.body);
+
+    if (!valid) {
+      return res.status(400).json({
+        code: 400,
+        data: null,
+        message,
+      });
+    }
     const result = await authServices.GenerateToken(req.decoded);
     return res
       .status(200)
