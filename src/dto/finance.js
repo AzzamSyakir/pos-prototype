@@ -1,4 +1,4 @@
-export class CalculateSummaryDto {
+export class CalculateFinanceSummaryDto {
   static allowedTargetLevels = ["day", "week", "month", "year"];
 
   constructor({ targetLevel, userId }) {
@@ -9,10 +9,10 @@ export class CalculateSummaryDto {
 
   validate() {
     if (
-      !CalculateSummaryDto.allowedTargetLevels.includes(this.targetLevel)
+      !CalculateFinanceSummaryDto.allowedTargetLevels.includes(this.targetLevel)
     ) {
       throw new Error(
-        `targetLevel must be one of: ${CalculateSummaryDto.allowedTargetLevels.join(", ")}`
+        `targetLevel must be one of: ${CalculateFinanceSummaryDto.allowedTargetLevels.join(", ")}`
       );
     }
   }

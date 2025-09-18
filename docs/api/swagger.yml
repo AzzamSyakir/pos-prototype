@@ -104,11 +104,11 @@ components:
         email:
           type: string
           format: email
-          example: example.user@example.com
+          example: john.doe@example.com
         password:
           type: string
           format: password
-          example: strongpassword123
+          example: StrongPassword123!
       required:
         - email
         - password
@@ -172,6 +172,93 @@ components:
                 expiry:
                   type: string
                   example: 1d
+    #AddCapital components
+    AddCapitalRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: amount that will be stored in capital.
+          example: 100000
+      required:
+        - amount
+    AddCapitalSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: Add Capital successfully
+        data:
+          type: object
+          properties:
+            status:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: Capital added successfully
+            data:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  example: 4d2f14da-c660-474b-9f2f-88839a731952
+                user_id:
+                  type: string
+                  format: uuid
+                  example: 8811b320-0659-45fd-b33f-ef69b2112df9
+                amount:
+                  type: string
+                  example: "1000000.00"
+                type:
+                  type: string
+                  enum: [day, week, month]
+                  example: day
+                created_at:
+                  type: string
+                  format: date-time
+                  example: 2025-09-11T19:57:40.689Z
+                updated_at:
+                  type: string
+                  format: date-time
+                  example: 2025-09-11T19:57:40.689Z
+  #CalculateFinanceSummary components
+    CalculateFinanceSummarySuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: calculate summary success
+        data:
+          type: object
+          properties:
+            status:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: Summary calculated successfully
+            data:
+              type: object
+              properties:
+                omzet:
+                  type: string
+                  example: "500000.00"
+                capital:
+                  type: number
+                  format: double
+                  example: 46666.666666666664
+                profit:
+                  type: number
+                  format: double
+                  example: 453333.3333333333
 
   examples:
     #CreateTransaction components
@@ -302,6 +389,8 @@ tags:
     description: Handles user authentication, including account registration, login, and secure token management.
   - name: Transactions
     description: Covers sales transaction operations, such as creating new transactions and retrieving transaction records.
+  - name: Finance
+    description: Covers calculation for profit, omzet, etc, also covers add capital functionality.
 paths:
   /api/auth/register:
     post:
@@ -413,3 +502,53 @@ paths:
                   $ref: "#/components/examples/AchDirectDebitTransactionResponseExample"
                 sepaDebitResponse:
                   $ref: "#/components/examples/SepaDebitTransactionResponseExample"
+  /api/finance/add-capital/{type}:
+    post:
+      tags:
+        - Finance
+      summary: Add capital for a specific period
+      description: Adds an amount to the user's capital for the specified period (day, week, month, or year). This capital will be used as the base for calculating profit.
+      operationId: AddCapital
+      parameters:
+        - name: type
+          in: path
+          required: true
+          description: The period type for the capital entry
+          schema:
+            type: string
+            enum: [day, week, month, year]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCapitalRequest"
+      responses:
+        "200":
+          description: Capital successfully added for the specified period
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddCapitalSuccessResponse"
+  /api/finance/calculate/summary/{type}:
+      get:
+        tags:
+          - Finance
+        summary: Gives user total omzet, total profit, and remaining capital
+        description: This endpoint calculates the financial summary for the user based on the given period type (day, week, month, or year).
+        operationId: CalculateFinanceSummary
+        parameters:
+          - name: type
+            in: path
+            required: true
+            description: Type of summary period
+            schema:
+              type: string
+              enum: [day, week, month, year]
+        responses:
+          "200":
+            description: Successfully calculated finance summary
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CalculateFinanceSummarySuccessResponse"

@@ -131,3 +131,56 @@ export class AuthLoginDto {
     };
   }
 }
+export class LogoutDto {
+  static validFields = [];
+
+  static snakeToCamel(str) {
+    return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+  }
+
+  static validateFormRequest(body) {
+    const errors = [];
+    const safeBody = body ?? {};
+
+    Object.keys(safeBody).forEach((k) => {
+      if (!LogoutDto.validFields.includes(k)) {
+        errors.push(`field ${k} is not allowed`);
+      }
+    });
+
+    return {
+      valid: errors.length === 0,
+      message: errors.join(", "),
+    };
+  }
+
+  constructor(_) {
+  }
+}
+
+export class AuthGenerateTokenDto {
+  static validFields = [];
+
+  static snakeToCamel(str) {
+    return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+  }
+
+  static validateFormRequest(body) {
+    const errors = [];
+    const safeBody = body ?? {};
+
+    Object.keys(safeBody).forEach((k) => {
+      if (!AuthGenerateTokenDto.validFields.includes(k)) {
+        errors.push(`field ${k} is not allowed`);
+      }
+    });
+
+    return {
+      valid: errors.length === 0,
+      message: errors.join(", "),
+    };
+  }
+
+  constructor(_) {
+  }
+}

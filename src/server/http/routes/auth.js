@@ -7,10 +7,6 @@ import { CheckAccessToken } from "#middleware/check_access_token";
  */
 export function AuthRoutes(app) {
   const router = express.Router();
-  router.get("/", (req, res) => {
-    res.send("cihuy from auth");
-  });
-
   router.post("/login", (req, res) => {
     authController.Login(req, res)
   });
