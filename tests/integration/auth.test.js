@@ -316,3 +316,20 @@ describe('POST GenerateToken', () => {
     logOnFail(res, () => expect(res.body.message).toBe(`Authorization header is missing`));
   });
 });
+describe('CORS Headers on Auth Endpoints', () => {
+  const endpoints = [
+    { method: 'post', url: '/api/auth/register' },
+    { method: 'post', url: '/api/auth/login' },
+    { method: 'post', url: '/api/auth/logout' },
+    { method: 'post', url: '/api/auth/generate-token' },
+  ];
+
+  endpoints.forEach(({ method, url }) => {
+    it(`should return Access-Control-Allow-Origin * header for ${method.toUpperCase()} ${url}`, async () => {
+      const res = await request(app)[method](url);
+
+      expect(res.headers).toHaveProperty('access-control-allow-origin');
+      expect(res.headers['access-control-allow-origin']).toBe('*');
+    });
+  });
+});
