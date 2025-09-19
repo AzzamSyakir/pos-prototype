@@ -7,45 +7,58 @@ export class AuthRegisterDto {
   }
 
   static validFields = ["name", "email", "password", "phoneNumber"];
+  static requiredFields = ["name", "email", "password", "phoneNumber"];
+
   static snakeToCamel(str) {
     return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
   }
+
+  static camelToSnake(str) {
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  }
+
   static validate(req) {
     const raw = req?.body ?? {};
     const errors = [];
 
+    // mapping snake_case -> camelCase, plus keep reference ke rawKey
+    const mapped = {};
+    const keyMap = {}; // camelKey -> rawKey
+    Object.keys(raw).forEach((rawKey) => {
+      const camelKey = this.snakeToCamel(rawKey);
+      mapped[camelKey] = raw[rawKey];
+      keyMap[camelKey] = rawKey;
+    });
+
+    // cek field ilegal (pakai rawKey biar konsisten dengan request)
     const illegalFields = Object.keys(raw).filter(
-      (k) => !this.validFields.includes(this.snakeToCamel(k))
+      (rawKey) => !this.validFields.includes(this.snakeToCamel(rawKey))
     );
     if (illegalFields.length > 0) {
       errors.push(`Invalid fields: ${illegalFields.join(", ")}`);
     }
 
-    const mapped = {};
-    Object.keys(raw).forEach((k) => {
-      const camelKey = this.snakeToCamel(k);
-      mapped[camelKey] = raw[k];
+    // cek required + type
+    this.requiredFields.forEach((camelKey) => {
+      const rawKey = keyMap[camelKey] || this.camelToSnake(camelKey);
+
+      if (
+        mapped[camelKey] === undefined ||
+        mapped[camelKey] === null ||
+        mapped[camelKey] === ""
+      ) {
+        errors.push(`${rawKey} is required`);
+      } else if (typeof mapped[camelKey] !== "string") {
+        errors.push(`${rawKey} must be a string`);
+      }
     });
 
-    if (!mapped.name || typeof mapped.name !== "string") {
-      errors.push("name is required and must be a string");
-    }
-
-    if (!mapped.email || typeof mapped.email !== "string") {
-      errors.push("email is required and must be a string");
-    } else {
+    // validasi khusus email
+    if (mapped.email && typeof mapped.email === "string") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(mapped.email)) {
         errors.push("email must be a valid email address");
       }
-    }
-
-    if (!mapped.password || typeof mapped.password !== "string") {
-      errors.push("password is required and must be a string");
-    }
-
-    if (!mapped.phoneNumber || typeof mapped.phoneNumber !== "string") {
-      errors.push("phoneNumber is required and must be a string");
     }
 
     return {
@@ -53,10 +66,9 @@ export class AuthRegisterDto {
       message: errors.length > 0 ? errors.join(", ") : null,
     };
   }
+
   static fromRequest(req) {
-    const raw = {
-      ...req.body,
-    };
+    const raw = { ...req.body };
 
     const snakeToCamel = (str) =>
       str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
@@ -80,53 +92,71 @@ export class AuthLoginDto {
   }
 
   static validFields = ["name", "email", "password"];
+  static requiredFields = ["password"]; // password selalu wajib
 
   static snakeToCamel(str) {
     return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+  }
+
+  static camelToSnake(str) {
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
   }
 
   static validate(req) {
     const raw = req?.body ?? {};
     const errors = [];
 
+    const mapped = {};
+    const keyMap = {};
+    Object.keys(raw).forEach((rawKey) => {
+      const camelKey = this.snakeToCamel(rawKey);
+      mapped[camelKey] = raw[rawKey];
+      keyMap[camelKey] = rawKey;
+    });
+
     const illegalFields = Object.keys(raw).filter(
-      (k) => !this.validFields.includes(this.snakeToCamel(k))
+      (rawKey) => !this.validFields.includes(this.snakeToCamel(rawKey))
     );
     if (illegalFields.length > 0) {
       errors.push(`Invalid fields: ${illegalFields.join(", ")}`);
     }
 
-    const mapped = {};
-    Object.keys(raw).forEach((k) => {
-      const camelKey = this.snakeToCamel(k);
-      mapped[camelKey] = raw[k];
+    this.requiredFields.forEach((camelKey) => {
+      const rawKey = keyMap[camelKey] || this.camelToSnake(camelKey);
+      if (
+        mapped[camelKey] === undefined ||
+        mapped[camelKey] === null ||
+        mapped[camelKey] === ""
+      ) {
+        errors.push(`${rawKey} is required`);
+      } else if (typeof mapped[camelKey] !== "string") {
+        errors.push(`${rawKey} must be a string`);
+      }
     });
 
     if (
-      (!mapped.name || mapped.name.trim() === "") &&
-      (!mapped.email || mapped.email.trim() === "")
+      (!mapped.name || mapped.name === "") &&
+      (!mapped.email || mapped.email === "")
     ) {
       errors.push("Either name or email is required");
     }
 
-    if (
-      !mapped.password ||
-      typeof mapped.password !== "string" ||
-      mapped.password.trim() === ""
-    ) {
-      errors.push("password is required and must be a string");
+    if (mapped.name !== undefined && mapped.name !== null && mapped.name !== "") {
+      const rawKey = keyMap.name || "name";
+      if (typeof mapped.name !== "string") {
+        errors.push(`${rawKey} must be a string`);
+      }
     }
 
-    if (mapped.name && typeof mapped.name !== "string") {
-      errors.push("name must be a string");
-    }
-
-    if (mapped.email && typeof mapped.email !== "string") {
-      errors.push("email must be a string");
-    } else if (mapped.email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(mapped.email)) {
-        errors.push("email must be a valid email address");
+    if (mapped.email !== undefined && mapped.email !== null && mapped.email !== "") {
+      const rawKey = keyMap.email || "email";
+      if (typeof mapped.email !== "string") {
+        errors.push(`${rawKey} must be a string`);
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(mapped.email)) {
+          errors.push(`${rawKey} must be a valid email address`);
+        }
       }
     }
 
@@ -150,6 +180,7 @@ export class AuthLoginDto {
     return new AuthLoginDto(mapped);
   }
 }
+
 export class AuthLogoutDto {
   constructor({ userId }) {
     this.userId = userId;
