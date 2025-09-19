@@ -55,9 +55,11 @@ export class CalculateFinanceSummaryDto {
 
   static fromRequest(req) {
     const decoded = req?.decoded ?? {};
+    const params = req?.params ?? {};
     const raw = {
       ...req.body,
       userId: decoded.userId,
+      targetLevel: params.targetLevel,
     };
 
     const mapped = {};
@@ -96,7 +98,6 @@ export class AddCapitalDto {
 
     const errors = [];
 
-    // cek illegal fields di body
     const illegalFields = Object.keys(req.body ?? {}).filter(
       (k) => !this.validFields.includes(this.snakeToCamel(k))
     );

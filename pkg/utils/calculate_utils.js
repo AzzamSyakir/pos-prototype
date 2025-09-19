@@ -18,7 +18,6 @@ export function normalizeModal(amount, modalLevel, targetLevel, date = new Date(
   if (modalLevel === "year" && targetLevel === "month") return (amount / daysInYear) * daysInMonth;
   if (modalLevel === "year" && targetLevel === "day") return amount / daysInYear;
   if (modalLevel === "year" && targetLevel === "week") return (amount / daysInYear) * 7;
-
   throw new Error(`Conversion from level "${modalLevel}" to "${targetLevel}" is not supported`);
 }
 
