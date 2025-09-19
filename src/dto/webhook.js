@@ -1,28 +1,12 @@
 export class StripePaymentEventDto {
-  constructor({ id, type, created, livemode, paymentId, customer, status }) {
-    this.id = id;
-    this.type = type;
-    this.created = created;
-    this.livemode = livemode;
+  constructor({ paymentId, status }) {
     this.paymentId = paymentId;
-    this.customer = customer;
     this.status = status;
   }
 
   static validate(req) {
     const body = req?.body ?? {};
     const errors = [];
-
-    ["id", "type", "created", "data"].forEach((f) => {
-      if (body[f] === undefined || body[f] === null) {
-        errors.push(`${f} is required`);
-      }
-    });
-
-    if (body.id && typeof body.id !== "string") {
-      errors.push("id must be a string");
-    }
-
     if (
       body.type &&
       !(
@@ -34,15 +18,6 @@ export class StripePaymentEventDto {
       errors.push(
         "type must be payment_intent.*, checkout.session.*, or payment_link.*"
       );
-    }
-
-    if (body.created && typeof body.created !== "number") {
-      errors.push("created must be a number (timestamp)");
-    }
-
-    const customer = body.data?.object?.customer;
-    if (customer && typeof customer !== "string") {
-      errors.push("customer must be a string if provided");
     }
 
     return {
