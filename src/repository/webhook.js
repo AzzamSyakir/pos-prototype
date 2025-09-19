@@ -10,7 +10,6 @@ export async function UpdateTransactionStatusByPaymentId(stripePaymentId, status
     WHERE stripe_payment_id = $3  
     AND (status IS NULL OR status != 'succeeded')
     `;
-
   const values = [status, updatedAt, stripePaymentId];
   await db.query(query, values);
 }
