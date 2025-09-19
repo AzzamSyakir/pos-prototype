@@ -20,12 +20,7 @@ export async function CreateTransaction(dto) {
   const payment = await stripeUtils.CreatePayment(trx);
   trx.stripePaymentId = payment.id
   const result = await transactionRepo.CreateTransaction(trx);
-  const response = {
-    status: 'success',
-    transaction: result,
-    payment: payment,
-  };
-  return response;
+  return result;
 }
 
 export async function FetchTransaction(userId) {
