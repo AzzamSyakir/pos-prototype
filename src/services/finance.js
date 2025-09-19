@@ -37,7 +37,7 @@ export async function CalculateFinanceSummary(dto) {
       capital: normalizedCapital,
       profit
     },
-    message: "Summary calculated successfully"
+    message: "CalculateSummary Success"
   };
 }
 
