@@ -2,7 +2,7 @@ import { TransactionEntity } from '#entity/transaction'
 import * as stripeUtils from '#utils/stripe_utils'
 import * as transactionRepo from '#repository/transaction'
 /**
- * @param {import('#dto/transaction').TransactionDto} dto
+ * @param {import('#dto/transaction').CreateTransactionDto} dto
  */
 export async function CreateTransaction(dto) {
   const userEmail = await transactionRepo.GetUserEmailByUserId(dto.userId)
