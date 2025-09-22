@@ -5,20 +5,28 @@ export function normalizeModal(amount, modalLevel, targetLevel, date = new Date(
   const daysInYear = getDaysInYear(year);
 
   if (modalLevel === targetLevel) return amount;
+  function convertAmount(amount, modalLevel, targetLevel, { daysInMonth, daysInYear }) {
+    if (modalLevel === targetLevel) return amount;
 
-  if (modalLevel === "day" && targetLevel === "month") return amount * daysInMonth;
-  if (modalLevel === "day" && targetLevel === "week") return amount * 7;
+    if (modalLevel === "day" && targetLevel === "week") return amount * 7;
+    if (modalLevel === "day" && targetLevel === "month") return amount * daysInMonth;
+    if (modalLevel === "day" && targetLevel === "year") return amount * daysInYear;
 
-  if (modalLevel === "week" && targetLevel === "day") return amount / 7;
-  if (modalLevel === "week" && targetLevel === "month") return (amount / 7) * daysInMonth;
+    if (modalLevel === "week" && targetLevel === "day") return amount / 7;
+    if (modalLevel === "week" && targetLevel === "month") return (amount / 7) * daysInMonth;
+    if (modalLevel === "week" && targetLevel === "year") return (amount / 7) * daysInYear;
 
-  if (modalLevel === "month" && targetLevel === "day") return amount / daysInMonth;
-  if (modalLevel === "month" && targetLevel === "week") return (amount / daysInMonth) * 7;
+    if (modalLevel === "month" && targetLevel === "day") return amount / daysInMonth;
+    if (modalLevel === "month" && targetLevel === "week") return (amount / daysInMonth) * 7;
+    if (modalLevel === "month" && targetLevel === "year") return (amount / daysInMonth) * daysInYear;
 
-  if (modalLevel === "year" && targetLevel === "month") return (amount / daysInYear) * daysInMonth;
-  if (modalLevel === "year" && targetLevel === "day") return amount / daysInYear;
-  if (modalLevel === "year" && targetLevel === "week") return (amount / daysInYear) * 7;
-  throw new Error(`Conversion from level "${modalLevel}" to "${targetLevel}" is not supported`);
+    if (modalLevel === "year" && targetLevel === "day") return amount / daysInYear;
+    if (modalLevel === "year" && targetLevel === "week") return (amount / daysInYear) * 7;
+    if (modalLevel === "year" && targetLevel === "month") return (amount / daysInYear) * daysInMonth;
+
+    throw new Error(`Conversion from level "${modalLevel}" to "${targetLevel}" is not supported`);
+  }
+
 }
 
 function getDaysInMonth(year, month) {
