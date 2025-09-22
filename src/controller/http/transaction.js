@@ -9,13 +9,13 @@ import * as response from '#utils/response_utils'
 
 export async function CreateTransaction(req, res) {
   try {
-    const validation = transactionDto.TransactionDto.validate(req);
+    const validation = transactionDto.CreateTransactionDto.validate(req);
     if (!validation.valid) {
       return res
         .status(400)
         .json(response.errorResponse(400, validation.message || "validation failed"));
     }
-    const dto = transactionDto.TransactionDto.fromRequest(req);
+    const dto = transactionDto.CreateTransactionDto.fromRequest(req);
     const result = await transactionServices.CreateTransaction(dto);
 
     return res
@@ -35,8 +35,8 @@ export async function FetchTransaction(req, res) {
 
     if (!serviceResult.success) {
       return res
-        .status(404)
-        .json(response.errorResponse(404, serviceResult.message));
+        .status(400)
+        .json(response.errorResponse(400, serviceResult.message));
     }
 
     return res

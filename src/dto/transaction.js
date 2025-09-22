@@ -1,4 +1,4 @@
-export class TransactionDto {
+export class CreateTransactionDto {
   constructor({
     amount,
     paymentMethod,
@@ -150,7 +150,7 @@ export class TransactionDto {
       }
     });
 
-    return new TransactionDto({
+    return new CreateTransactionDto({
       ...mapped,
       userId: decoded.userId,
       stripeCustomerId: decoded.stripe_cus_id,
