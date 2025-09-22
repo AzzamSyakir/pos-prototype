@@ -18,13 +18,17 @@ export async function UpdateTransactionStatus(req, res) {
     }
     const dto = webhookDto.StripePaymentEventDto.fromRequest(req);
     const result = await webhookServices.UpdateTransactionStatus(dto);
-
+    if (!result.success) {
+      return res
+        .status(400)
+        .json(response.errorResponse(400, result.message));
+    }
     return res
       .status(200)
       .json(response.SuccessResponse(200, "Transaction Updated successfully", result));
   } catch (err) {
     return res
-      .status(400)
-      .json(response.errorResponse(400, err.message || "Internal server error"));
+      .status(500)
+      .json(response.errorResponse(500, err.message || "Internal server error"));
   }
 }
