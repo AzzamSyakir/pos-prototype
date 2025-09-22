@@ -14,16 +14,11 @@ describe('POST /api/auth/register', () => {
   };
   it('should return success with status code 201 and message "Register success" when all fields are valid', async () => {
     const res = await request(app).post(endpoint).send({
-      name: 'Test User',
+      name: "Test User",
       email: 'user@test.com',
       password: 'password123',
       phone_number: '081234567891',
     });
-
-    if (res.statusCode !== 201) {
-      console.error('\n Unexpected response:');
-      console.error(JSON.stringify(res.body, null, 2));
-    }
 
     logOnFail(res, () => expect(res.body.code).toBe(201));
     logOnFail(res, () => expect(res.body).toHaveProperty('data'));
@@ -106,7 +101,7 @@ describe('POST /api/auth/register', () => {
     logOnFail(res, () => expect(res.body.message).toBe('phone_number is required'));
   });
   const notallowedField = 'unawantedField';
-  it(`should return error with status code 400 and message "field ${notallowedField} is not allowed" when unwanted field is given`, async () => {
+  it(`should return error with status code 400 and message "Invalid fields: ${notallowedField}" when unwanted field is given`, async () => {
     const res = await request(app).post(endpoint).send({
       name: 'Test User',
       email: 'user@test.com',
@@ -118,7 +113,7 @@ describe('POST /api/auth/register', () => {
     logOnFail(res, () => expect(res.statusCode).toBe(400));
     logOnFail(res, () => expect(res.body.code).toBe(400));
     logOnFail(res, () => expect(res.body.data).toBeNull());
-    logOnFail(res, () => expect(res.body.message).toBe(`field ${notallowedField} is not allowed`));
+    logOnFail(res, () => expect(res.body.message).toBe(`Invalid fields: ${notallowedField}`));
   });
 });
 describe('POST /api/auth/login', () => {
@@ -174,7 +169,7 @@ describe('POST /api/auth/login', () => {
   });
 
   const notallowedField = 'unawantedField';
-  it(`should return error with status code 400 and message "field ${notallowedField} is not allowed" when unwanted field is given`, async () => {
+  it(`should return error with status code 400 and message "Invalid fields: ${notallowedField}" when unwanted field is given`, async () => {
     const res = await request(app).post(endpoint).send({
       name: 'Test User',
       email: 'user@test.com',
@@ -185,13 +180,12 @@ describe('POST /api/auth/login', () => {
     logOnFail(res, () => expect(res.statusCode).toBe(400));
     logOnFail(res, () => expect(res.body.code).toBe(400));
     logOnFail(res, () => expect(res.body.data).toBeNull());
-    logOnFail(res, () => expect(res.body.message).toBe(`field ${notallowedField} is not allowed`));
+    logOnFail(res, () => expect(res.body.message).toBe(`Invalid fields: ${notallowedField}`));
   });
 });
 describe('POST Logout', () => {
   const endpoint = '/api/auth/logout';
-  let refreshToken;
-
+  let accessToken
   const logOnFail = (res, fn) => {
     try {
       fn();
@@ -226,7 +220,7 @@ describe('POST Logout', () => {
   });
 
   const notallowedField = 'unawantedField';
-  it(`should return error with status code 400 and message "field ${notallowedField} is not allowed" when unwanted field is given`, async () => {
+  it(`should return error with status code 400 and message "Invalid fields: ${notallowedField}" when unwanted field is given`, async () => {
     const res = await request(app)
       .post(endpoint)
       .set('Authorization', `Bearer ${accessToken}`)
@@ -237,7 +231,7 @@ describe('POST Logout', () => {
     logOnFail(res, () => expect(res.statusCode).toBe(400));
     logOnFail(res, () => expect(res.body.code).toBe(400));
     logOnFail(res, () => expect(res.body.data).toBeNull());
-    logOnFail(res, () => expect(res.body.message).toBe(`field ${notallowedField} is not allowed`));
+    logOnFail(res, () => expect(res.body.message).toBe(`Invalid fields: ${notallowedField}`));
   });
   it(`should return error with status code 401 and message "Authorization header is missing" when access token didnt provided in request`, async () => {
     const res = await request(app)
@@ -292,7 +286,7 @@ describe('POST GenerateToken', () => {
   });
 
   const notallowedField = 'unawantedField';
-  it(`should return error with status code 400 and message "field ${notallowedField} is not allowed" when unwanted field is given`, async () => {
+  it(`should return error with status code 400 and message "Invalid fields: ${notallowedField}" when unwanted field is given`, async () => {
     const res = await request(app)
       .post(endpoint)
       .set('Authorization', `Bearer ${refreshToken}`)
@@ -303,7 +297,7 @@ describe('POST GenerateToken', () => {
     logOnFail(res, () => expect(res.statusCode).toBe(400));
     logOnFail(res, () => expect(res.body.code).toBe(400));
     logOnFail(res, () => expect(res.body.data).toBeNull());
-    logOnFail(res, () => expect(res.body.message).toBe(`field ${notallowedField} is not allowed`));
+    logOnFail(res, () => expect(res.body.message).toBe(`Invalid fields: ${notallowedField}`));
   });
   it(`should return error with status code 401 and message "Authorization header is missing" when refresh token didnt provided in request`, async () => {
     const res = await request(app)
