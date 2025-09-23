@@ -1,8 +1,7 @@
 import request from 'supertest';
-import { newServer } from '#httpServer';
-const app = newServer();
+import { createApp } from '#httpServer';
 import { UserSeeder } from "../seeds/script/seed_users.js";
-
+const app = createApp();
 describe('POST /api/auth/register', () => {
   const endpoint = '/api/auth/register';
   const logOnFail = (res, fn) => {
