@@ -19,8 +19,8 @@ export async function CreateTransaction(req, res) {
     const result = await transactionServices.CreateTransaction(dto);
 
     return res
-      .status(200)
-      .json(response.SuccessResponse(200, "Transaction created successfully", result));
+      .status(201)
+      .json(response.SuccessResponse(201, "Transaction created successfully", result));
   } catch (err) {
     return res
       .status(500)
