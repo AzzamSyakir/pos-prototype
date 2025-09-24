@@ -163,3 +163,20 @@ describe('GET /api/transaction (FetchTransaction)', () => {
     });
   });
 });
+
+describe('CORS Headers on transaction Endpoints', () => {
+  const corsEndpoints = [
+    { method: 'post', path: '/api/transaction' },
+    { method: 'get', path: '/api/transaction' },
+  ];
+
+  describe.each(corsEndpoints)('$method $path', ({ method, path }) => {
+    it(`should return Access-Control-Allow-Origin *`, async () => {
+      const res = await request(app)[method](path)
+        .set('Origin', 'http://example.com');
+
+      expect(res.headers).toHaveProperty('access-control-allow-origin');
+      expect(res.headers['access-control-allow-origin']).toBe('*');
+    });
+  });
+});
