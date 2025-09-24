@@ -2,6 +2,7 @@ import request from 'supertest';
 import { createApp } from '#httpServer';
 import { UserSeeder } from "../seeds/script/seed_users.js";
 import { TransactionSeeder } from "../seeds/script/seed_transactions.js";
+import { CapitalSeeder } from "../seeds/script/seed_capitals.js";
 
 const app = createApp();
 let accessToken;
@@ -21,7 +22,48 @@ beforeAll(async () => {
 afterAll(async () => {
   await userSeed.Down();
 });
+describe('Add Capital', () => {
+  const types = ['day', 'week', 'month', 'year'];
+  const capitalSeeder = new CapitalSeeder();
+  afterAll(async () => {
+    await capitalSeeder.Down();
+  });
 
+  describe.each(types)('TargetType: %s', (type) => {
+    const amount = 10000;
+    const endpoint = `/api/finance/add-capital/${type}`;
+
+    const logOnFail = (res, fn) => {
+      try {
+        fn();
+      } catch (err) {
+        console.error('❌ Test failed. Response:', res.body);
+        throw err;
+      }
+    };
+
+    it('✅ should return success (201) when all fields are valid', async () => {
+      const res = await request(app)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ amount });
+
+      logOnFail(res, () => expect(res.body.code).toBe(201));
+      logOnFail(res, () => expect(res.body.data.amount).toBe(amount.toFixed(2)));
+      logOnFail(res, () => expect(res.body.data.type).toBe(type));
+      logOnFail(res, () => expect(res.body.message).toBe('Add Capital Success'));
+
+      capitalSeeder.capitalSeedData.data.push({
+        id: res.body.data.id,
+        user_id: res.body.data.user_id,
+        amount: res.body.data.amount,
+        type: res.body.data.type,
+        createdAt: res.body.data.created_at,
+        updatedAt: res.body.data.updated_at,
+      });
+    });
+  });
+});
 describe('Calculate Summary API', () => {
   const levels = ['day', 'week', 'month', 'year'];
   const endpoint = (type) => `/api/finance/calculate/summary/${type}`;
