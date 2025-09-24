@@ -1,5 +1,5 @@
 import * as transactionServices from "#services/transaction";
-import { TransactionDto } from '#dto/transaction';
+import * as transactionDto from '#dto/transaction';
 import * as response from '#utils/response_utils'
 /**
  * @param {import('express').Request} req
@@ -9,14 +9,13 @@ import * as response from '#utils/response_utils'
 
 export async function CreateTransaction(req, res) {
   try {
-    const validation = TransactionDto.validateFormRequest(req.body);
+    const validation = transactionDto.CreateTransactionDto.validate(req);
     if (!validation.valid) {
-      return res.status(400)
-        .json(response.errorResponse(400, validation.message || "request validation failed"));
+      return res
+        .status(400)
+        .json(response.errorResponse(400, validation.message || "validation failed"));
     }
-    const dto = TransactionDto.fromRequest(req.body);
-    dto.stripeCustomerId = req.decoded.stripe_cus_id;
-    dto.userId = req.decoded.userId;
+    const dto = transactionDto.CreateTransactionDto.fromRequest(req);
     const result = await transactionServices.CreateTransaction(dto);
 
     return res
@@ -36,8 +35,8 @@ export async function FetchTransaction(req, res) {
 
     if (!serviceResult.success) {
       return res
-        .status(404)
-        .json(response.errorResponse(404, serviceResult.message));
+        .status(400)
+        .json(response.errorResponse(400, serviceResult.message));
     }
 
     return res

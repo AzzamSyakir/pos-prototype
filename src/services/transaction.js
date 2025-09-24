@@ -2,7 +2,7 @@ import { TransactionEntity } from '#entity/transaction'
 import * as stripeUtils from '#utils/stripe_utils'
 import * as transactionRepo from '#repository/transaction'
 /**
- * @param {import('#dto/transaction').TransactionDto} dto
+ * @param {import('#dto/transaction').CreateTransactionDto} dto
  */
 export async function CreateTransaction(dto) {
   const userEmail = await transactionRepo.GetUserEmailByUserId(dto.userId)
@@ -20,12 +20,7 @@ export async function CreateTransaction(dto) {
   const payment = await stripeUtils.CreatePayment(trx);
   trx.stripePaymentId = payment.id
   const result = await transactionRepo.CreateTransaction(trx);
-  const response = {
-    status: 'success',
-    transaction: result,
-    payment: payment,
-  };
-  return response;
+  return result;
 }
 
 export async function FetchTransaction(userId) {

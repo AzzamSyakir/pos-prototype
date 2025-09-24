@@ -1,5 +1,15 @@
-export class TransactionDto {
-  constructor({ amount, paymentMethod, accountholderName, accountNumber, routingNumber, iban, email, stripeCustomerId, userId }) {
+export class CreateTransactionDto {
+  constructor({
+    amount,
+    paymentMethod,
+    accountholderName,
+    accountNumber,
+    routingNumber,
+    iban,
+    email,
+    stripeCustomerId,
+    userId,
+  }) {
     this.amount = amount;
     this.paymentMethod = paymentMethod;
     this.accountholderName = accountholderName;
@@ -7,82 +17,143 @@ export class TransactionDto {
     this.routingNumber = routingNumber;
     this.iban = iban;
     this.email = email;
-    this.stripeCustomerId = stripeCustomerId
-    this.userId = userId
+    this.stripeCustomerId = stripeCustomerId;
+    this.userId = userId;
   }
 
   static validFields = [
-    'amount',
-    'paymentMethod',
-    'accountholderName',
-    'accountNumber',
-    'routingNumber',
-    'iban',
-    'email'
+    "amount",
+    "paymentMethod",
+    "accountholderName",
+    "accountNumber",
+    "routingNumber",
+    "iban",
+    "email",
   ];
 
-  static paymentMethods = ['payment_link', 'card', 'ach_direct_debit', 'sepa_debit'];
+  static paymentMethods = [
+    "payment_link",
+    "card",
+    "ach_direct_debit",
+    "sepa_debit",
+  ];
 
   static optionalFieldsRules = [
-    { fields: ['accountholderName'], allowed: ['ach_direct_debit', 'sepa_debit'] },
-    { fields: ['accountNumber', 'routingNumber'], allowed: ['ach_direct_debit'] },
-    { fields: ['iban', 'email'], allowed: ['sepa_debit'] }
+    {
+      fields: ["accountholderName"],
+      allowed: ["ach_direct_debit", "sepa_debit"],
+    },
+    { fields: ["accountNumber", "routingNumber"], allowed: ["ach_direct_debit"] },
+    { fields: ["iban", "email"], allowed: ["sepa_debit"] },
   ];
 
-  static stringFields = ['accountholderName', 'accountNumber', 'routingNumber', 'iban', 'email'];
+  static stringFields = [
+    "accountholderName",
+    "accountNumber",
+    "routingNumber",
+    "iban",
+    "email",
+  ];
 
-  static requiredFields = ['amount', 'paymentMethod'];
+  static requiredFields = ["amount", "paymentMethod"];
 
-  static fromRequest(body) {
-    const camelBody = {};
-    Object.keys(body).forEach(k => {
-      const camelKey = k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-      camelBody[camelKey] = body[k];
-    });
-    return new TransactionDto(camelBody);
+  static snakeToCamel(str) {
+    return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
   }
 
-  static validateFormRequest(body) {
+  static validate(req) {
+    const body = req?.body ?? {};
+    const decoded = req?.decoded ?? {};
+    const raw = {
+      ...body,
+      userId: decoded.userId,
+      stripeCustomerId: decoded.stripe_cus_id,
+    };
+
     const errors = [];
-    const pm = body.payment_method;
 
-    const missing = TransactionDto.requiredFields.filter(f => {
-      const snake = f.replace(/([A-Z])/g, '_$1').toLowerCase();
-      return body[snake] === undefined;
-    });
-    missing.forEach(f => errors.push(`${f} is required`));
-
-    if (pm && !TransactionDto.paymentMethods.includes(pm)) {
-      errors.push(`payment_method must be one of: ${TransactionDto.paymentMethods.join(', ')}`);
+    const illegalFields = Object.keys(body).filter(
+      (k) => !this.validFields.includes(this.snakeToCamel(k))
+    );
+    if (illegalFields.length > 0) {
+      errors.push(`Invalid fields: ${illegalFields.join(", ")}`);
     }
-    TransactionDto.optionalFieldsRules.forEach(rule => {
-      const invalid = rule.fields
-        .map(f => f.replace(/([A-Z])/g, '_$1').toLowerCase())
-        .filter(snake => body[snake] !== undefined && !rule.allowed.includes(pm));
 
+    const mapped = {};
+    Object.keys(raw).forEach((k) => {
+      const camelKey = this.snakeToCamel(k);
+      mapped[camelKey] = raw[k];
+    });
+
+    this.requiredFields.forEach((f) => {
+      if (
+        mapped[f] === undefined ||
+        mapped[f] === null ||
+        mapped[f] === ""
+      ) {
+        errors.push(`${f} is required`);
+      }
+    });
+
+    if (
+      mapped.paymentMethod &&
+      !this.paymentMethods.includes(mapped.paymentMethod)
+    ) {
+      errors.push(
+        `paymentMethod must be one of: ${this.paymentMethods.join(", ")}`
+      );
+    }
+
+    this.optionalFieldsRules.forEach((rule) => {
+      const invalid = rule.fields.filter(
+        (f) =>
+          mapped[f] !== undefined &&
+          !rule.allowed.includes(mapped.paymentMethod)
+      );
       if (invalid.length > 0) {
-        errors.push(`field ${invalid.join(' and ')} ${invalid.length > 1 ? 'are' : 'is'} only allowed for ${rule.allowed.join(' or ')}`);
+        errors.push(
+          `field ${invalid.join(" and ")} ${invalid.length > 1 ? "are" : "is"
+          } only allowed for ${rule.allowed.join(" or ")}`
+        );
       }
     });
 
-
-    TransactionDto.stringFields.forEach(f => {
-      const snake = f.replace(/([A-Z])/g, '_$1').toLowerCase();
-      if (body[snake] !== undefined && typeof body[snake] !== 'string') {
-        errors.push(`${snake} must be a string`);
+    this.stringFields.forEach((f) => {
+      if (mapped[f] !== undefined && typeof mapped[f] !== "string") {
+        errors.push(`${f} must be a string`);
       }
     });
 
-    Object.keys(body).forEach(k => {
-      const camel = k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-      if (!TransactionDto.validFields.includes(camel)) {
-        errors.push(`field ${k} is not allowed`);
+    if (mapped.amount !== undefined) {
+      if (typeof mapped.amount !== "number" || isNaN(mapped.amount)) {
+        errors.push("amount must be a valid number");
+      } else if (mapped.amount <= 0) {
+        errors.push("amount must be greater than 0");
       }
-    });
+    }
 
     return {
       valid: errors.length === 0,
-      message: errors.join(', ')
+      message: errors.length > 0 ? errors.join(", ") : null,
     };
+  }
+
+  static fromRequest(req) {
+    const body = req?.body ?? {};
+    const decoded = req?.decoded ?? {};
+
+    const mapped = {};
+    Object.keys(body).forEach((key) => {
+      const camelKey = this.snakeToCamel(key);
+      if (this.validFields.includes(camelKey)) {
+        mapped[camelKey] = body[key];
+      }
+    });
+
+    return new CreateTransactionDto({
+      ...mapped,
+      userId: decoded.userId,
+      stripeCustomerId: decoded.stripe_cus_id,
+    });
   }
 }

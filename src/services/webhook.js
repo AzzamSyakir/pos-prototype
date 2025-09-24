@@ -12,10 +12,24 @@ import * as authDto from '#dto/auth';
  */
 export async function UpdateTransactionStatus(dto) {
   const currentTime = new Date();
-  if (dto.status == 'paid') {
-    dto.status = 'succeeded'
-  }
-  await webhookRepo.UpdateTransactionStatusByPaymentId(dto.paymentId, dto.status, currentTime)
 
-  return null
+  if (dto.status === 'paid') {
+    dto.status = 'succeeded';
+  }
+
+  try {
+    const result = await webhookRepo.UpdateTransactionStatusByPaymentId(
+      dto.paymentId,
+      dto.status,
+      currentTime
+    );
+
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
 }

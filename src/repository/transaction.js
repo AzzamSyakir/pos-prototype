@@ -61,4 +61,3 @@ export async function GetUserEmailByUserId(id) {
   const email = result.rows[0].email;
   return email;
 }
-

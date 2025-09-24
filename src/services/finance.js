@@ -30,13 +30,14 @@ export async function CalculateFinanceSummary(dto) {
   const profit = omzet - normalizedCapital;
 
   return {
+    code: 200,
     status: true,
     data: {
       omzet,
       capital: normalizedCapital,
       profit
     },
-    message: "Summary calculated successfully"
+    message: "CalculateSummary Success"
   };
 }
 
@@ -45,17 +46,24 @@ export async function AddCapital(dto) {
     const capital = await capitalRepo.AddCapital(dto);
 
     if (!capital) {
-      throw new Error("Failed to add capital");
+      return {
+        status: false,
+        code: 500,
+        message: "Internal server error",
+        data: null,
+      };
     }
 
     return {
       status: true,
-      message: "Capital added successfully",
+      code: 201,
+      message: "Add Capital Success",
       data: capital,
     };
   } catch (err) {
     return {
       status: false,
+      code: 500,
       message: err.message || "Internal server error",
       data: null,
     };

@@ -85,10 +85,10 @@ export async function Login(dto) {
       email: authRepo.GetUserCredentialsByEmail,
       name: authRepo.GetUserCredentialsByName,
     };
-
-    const foundField = Object.keys(authMethods).find((f) =>
-      authDto.AuthLoginDto.isNonEmptyString(dto[f])
-    );
+    const foundField =
+      (dto.email && typeof dto.email === "string" && dto.email.trim() !== "") ? "email"
+        : (dto.name && typeof dto.name === "string" && dto.name.trim() !== "") ? "name"
+          : null;
 
     if (!foundField) {
       return {
@@ -171,12 +171,11 @@ export async function Login(dto) {
   }
 }
 
-export async function Logout(decodedData) {
-  if (!decodedData.userId) {
+export async function Logout(dto) {
+  if (!dto.userId) {
     throw new Error("Invalid user data");
   }
-
-  const refreshTokenRedisKey = `refresh_token:${decodedData.userId}`;
+  const refreshTokenRedisKey = `refresh_token:${dto.userId}`;
   const deletedCount = await redis.del(refreshTokenRedisKey);
 
   if (deletedCount === 0) {
@@ -187,11 +186,10 @@ export async function Logout(decodedData) {
 }
 
 
-export async function GenerateToken(decodedData) {
-
+export async function GenerateToken(dto) {
   var jwtPayload = {
-    userId: decodedData.userId,
-    stripe_cus_id: decodedData.stripe_cus_id,
+    userId: dto.userId,
+    stripe_cus_id: dto.stripe_cus_id,
   };
   var accessExpiry = env.app.accessTokenExpiry || "5m";
   var accessToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: accessExpiry });
@@ -199,7 +197,7 @@ export async function GenerateToken(decodedData) {
   var refreshExpiry = env.app.accesrefreshTokenExpiry || "1d";
   var refreshToken = jwt.sign(jwtPayload, env.app.jwtSecret, { expiresIn: refreshExpiry });
 
-  const redisKeyRefreshToken = `refresh_token:${decodedData.id}`;
+  const redisKeyRefreshToken = `refresh_token:${dto.id}`;
 
   const redisPayloadRefreshToken = {
     token: refreshToken,

@@ -1,5 +1,6 @@
 import * as webhookServices from "#services/webhook";
-import { StripePaymentEventDto } from '#dto/webhook';
+import * as webhookDto from '#dto/webhook';
+
 import * as response from '#utils/response_utils'
 /**
  * @param {import('express').Request} req
@@ -9,14 +10,19 @@ import * as response from '#utils/response_utils'
 
 export async function UpdateTransactionStatus(req, res) {
   try {
-    const validation = StripePaymentEventDto.validateFormRequest(req.body);
+    const validation = webhookDto.StripePaymentEventDto.validate(req);
     if (!validation.valid) {
-      return res.status(400)
-        .json(response.errorResponse(400, validation.message || "request validation failed"));
+      return res
+        .status(400)
+        .json(response.errorResponse(400, validation.message || "validation failed"));
     }
-    const dto = StripePaymentEventDto.fromRequest(req.body);
+    const dto = webhookDto.StripePaymentEventDto.fromRequest(req);
     const result = await webhookServices.UpdateTransactionStatus(dto);
-
+    if (!result.success) {
+      return res
+        .status(400)
+        .json(response.errorResponse(400, result.message));
+    }
     return res
       .status(200)
       .json(response.SuccessResponse(200, "Transaction Updated successfully", result));
