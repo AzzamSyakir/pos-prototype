@@ -5,8 +5,8 @@ on:
     branches: [ main ]
   pull_request:
 
-  env:
-    TERM: xterm-256color
+env:
+  TERM: xterm-256color
 
 jobs:
   test:
