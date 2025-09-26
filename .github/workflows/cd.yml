@@ -5,6 +5,9 @@ on:
   push:
     branches: ["main"]
 
+env:
+    TERM: xterm-256color
+
 jobs:
   build:
     runs-on: self-hosted
@@ -50,5 +53,3 @@ jobs:
 
       - name: Run Docker
         run: make up-prod
-        env:
-          TERM: xterm-256color
