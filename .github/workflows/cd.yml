@@ -2,8 +2,10 @@ name: CD Pipeline
 
 
 on:
-  push:
-    branches: ["main"]
+  workflow_run:
+      workflows: ["CI Pipeline"]
+      types:
+        - completed
 
 env:
     TERM: xterm-256color
