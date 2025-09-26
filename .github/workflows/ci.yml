@@ -1,16 +1,8 @@
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-
-env:
-  TERM: xterm-256color
-
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      TERM: xterm-256color
 
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +10,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Inject Stripe key
         run: |
